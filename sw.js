@@ -1,7 +1,7 @@
 // ShotList — офлайн-режим. Страница берётся из сети (чтобы обновления приходили сразу),
 // а без интернета открывается сохранённая копия. Шрифты и иконки кешируются.
-const CACHE = 'shotlist-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
+const CACHE = 'shotlist-v2';
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192-v2.png', 'icons/icon-512-v2.png', 'icons/apple-touch-icon-v2.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
