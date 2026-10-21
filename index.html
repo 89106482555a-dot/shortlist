@@ -16,6 +16,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+
+.banner.bk{display:flex;align-items:center;gap:10px}
+.banner.bk span{flex:1;min-width:0;cursor:pointer}
+.banner.bk .btn.s{flex:none}
+.autos{margin-top:8px;font-size:12.5px;color:var(--ok)}
 .fnote{margin:18px 4px 6px;font-size:11px;line-height:1.45;color:var(--mut);text-align:center}
 
 .ntg{margin:12px 0 2px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
@@ -1344,7 +1349,7 @@ input[type=date]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:n
 </div></div>
 <script>
 var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
-try{var raw=localStorage.getItem(KEY);if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
+var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
 function tplFor(t){return (TPL[t]||TPL['Другое']).map(function(x){return {t:x,done:false}})}
@@ -1360,7 +1365,9 @@ function applyTheme(t){theme=t;document.querySelectorAll('style[data-th]').forEa
 function setTheme(t){applyTheme(t);render()}
 function toggleTheme(){showTheme=!showTheme;render();if(showTheme)window.scrollTo(0,0)}
 function themePanel(){return '<div class="card"><div class="row"><b>Оформление</b><button class="btn s" onclick="toggleTheme()">Готово</button></div><div class="mut" style="margin-top:4px">Выбор сохраняется на этом устройстве. Данные во всех темах одни и те же.</div><div class="thp">'+THEMES.map(function(x){return '<button class="tho'+(x[0]===theme?' on':'')+'" style="--sw:'+x[3]+'" onclick="setTheme(\''+x[0]+'\')"><i></i><span>'+x[1]+'</span><small>'+x[2]+'</small></button>'}).join('')+'</div></div>'}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var mirT=null;
+function save(){var j=JSON.stringify(S);try{localStorage.setItem(KEY,j)}catch(e){}
+  clearTimeout(mirT);mirT=setTimeout(function(){try{fput('__state__',new Blob([j],{type:'application/json'})).catch(function(){})}catch(e){}},400)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function money(n){return Number(n||0).toLocaleString('ru-RU')+' '+S.cur}
@@ -1409,7 +1416,10 @@ function warnSel(w){if(w==null)w=3;return '<select id="f_w">'+[[0,'Не напо
 function dleft(ds){var a=ds.split('-'),t=new Date(+a[0],+a[1]-1,+a[2]),n=new Date();n=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((t-n)/864e5)}
 function when(n){return n===0?'сегодня':n===1?'завтра':'через '+n+' дн.'}
 function dlAlerts(){return S.projects.filter(function(p){if(!p.deadline||p.status==='Сдан'||left(p)===0&&(+p.editsTotal||0)>0)return false;var n=dleft(p.deadline),w=p.dwarn==null?3:+p.dwarn;return w>0&&n<=w}).sort(function(a,b){return a.deadline.localeCompare(b.deadline)}).map(function(p){var n=dleft(p.deadline);return '<div class="banner alert" onclick="openP(\''+p.id+'\')">'+(n<0?'Сдача просрочена на '+(-n)+' дн.':'Сдача монтажа '+when(n))+': '+esc(p.names||'Проект')+'<small>дедлайн '+fd(p.deadline)+' · монтажи '+(+p.editsDone||0)+'/'+(+p.editsTotal||0)+'</small></div>'}).join('')}
-function alerts(){return dlAlerts()+S.projects.filter(function(p){if(!p.date)return false;var n=dleft(p.date),w=p.warn==null?3:+p.warn;return w>0&&n>=0&&n<=w}).sort(function(a,b){return a.date.localeCompare(b.date)}).map(function(p){return '<div class="banner alert" onclick="goto(\''+p.date+'\');setTab(\'cal\')">Съёмка '+when(dleft(p.date))+': '+esc(p.names||'Проект')+'<small>'+fd(p.date)+' · '+esc(p.type||'Съёмка')+(p.place?' · '+esc(p.place):'')+'</small></div>'}).join('')}
+function bkAlert(){if(!S.projects.length)return '';var last=+S.lastBackup||0,days=Math.floor((Date.now()-last)/864e5),snooze=+S.bkSnooze||0;
+  if(last&&days<7)return '';if(Date.now()<snooze)return '';
+  return '<div class="banner alert bk"><span onclick="showData=true;render();window.scrollTo(0,0)">Сделай резервную копию<small>'+(last?'последняя '+days+' дн. назад':'копий ещё не было')+' · данные хранятся только на этом устройстве</small></span><button class="btn s" onclick="S.bkSnooze=Date.now()+3*864e5;save();render()">Позже</button></div>'}
+function alerts(){return bkAlert()+dlAlerts()+S.projects.filter(function(p){if(!p.date)return false;var n=dleft(p.date),w=p.warn==null?3:+p.warn;return w>0&&n>=0&&n<=w}).sort(function(a,b){return a.date.localeCompare(b.date)}).map(function(p){return '<div class="banner alert" onclick="goto(\''+p.date+'\');setTab(\'cal\')">Съёмка '+when(dleft(p.date))+': '+esc(p.names||'Проект')+'<small>'+fd(p.date)+' · '+esc(p.type||'Съёмка')+(p.place?' · '+esc(p.place):'')+'</small></div>'}).join('')}
 function ymd(s){return s.split('-').join('')}
 function nextD(s){var a=s.split('-'),d=new Date(+a[0],+a[1]-1,+a[2]+1);return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
 var BS=String.fromCharCode(92),NL=String.fromCharCode(10);
@@ -1785,7 +1795,7 @@ function delP(id){if(armed!==id){armed=id;render();return}armed=null;S.projects=
 function setQ(val){fq=val;render();var e=document.getElementById('f_q');e.focus();e.setSelectionRange(val.length,val.length)}
 function toggleData(){showData=!showData;dmsg='';render()}
 function dataPanel(){return '<div class="card"><div class="row"><b>Перенос и копия</b><button class="btn s" onclick="toggleData()">Готово</button></div>'
- +'<div class="mut" style="margin:6px 0 12px">Сохрани копию в файл и отправь её на другое устройство (AirDrop, Telegram, почта). Там нажми «Загрузить из файла». В копию входят проекты, оплаты, заметки, ответы и прикреплённые файлы.</div>'
+ +'<div class="autos">✓ Все изменения сохраняются автоматически на этом устройстве'+(S.lastBackup?'. Последняя копия в файл: '+new Date(S.lastBackup).toLocaleDateString('ru-RU'):'')+'</div><div class="mut" style="margin:6px 0 12px">Сохрани копию в файл и отправь её на другое устройство (AirDrop, Telegram, почта). Там нажми «Загрузить из файла». В копию входят проекты, оплаты, заметки, ответы и прикреплённые файлы.</div>'
  +'<div class="ract" style="margin-top:0"><button class="btn" onclick="exportFile()">Сохранить копию в файл</button><label class="btn s fpick" style="flex:1;justify-content:center">Загрузить из файла<input type="file" accept=".json,application/json" onchange="importFile(this)"></label></div>'
  +'<details class="adv"><summary>Перенос кодом (без файлов)</summary><textarea id="d_o" rows="3" readonly>'+esc(JSON.stringify(S))+'</textarea><button class="btn s full" onclick="copyData()">Скопировать код</button><textarea id="d_i" rows="3" placeholder="Вставьте сюда код с другого устройства" style="margin-top:10px"></textarea><button class="btn s full" onclick="importData()">Загрузить код (заменит текущие данные)</button></details>'
  +'<div class="mut" style="margin-top:8px">'+esc(dmsg)+'</div></div>'}
@@ -1802,9 +1812,9 @@ function exportFile(){
     var name='ShotList-backup-'+stamp+'.json',json=JSON.stringify({app:'ShotList',v:2,saved:n.toISOString(),S:S,files:files});
     var file=new File([json],name,{type:'application/json'});
     var mobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
-    if(mobile&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Копия ShotList'}).then(function(){dmsg='Копия отправлена';render()}).catch(function(){dmsg='';render()});return}
+    if(mobile&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Копия ShotList'}).then(function(){S.lastBackup=Date.now();save();dmsg='Копия отправлена';render()}).catch(function(){dmsg='';render()});return}
     var u=URL.createObjectURL(file),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},60000);
-    dmsg='Файл сохранён: '+name+' ('+fsz(json.length)+')';render()
+    S.lastBackup=Date.now();save();dmsg='Файл сохранён: '+name+' ('+fsz(json.length)+')';render()
   })}
 var preImport=null;
 function importFile(inp){var f=inp.files&&inp.files[0];if(!f)return;var r=new FileReader();
@@ -1901,6 +1911,13 @@ function addNote(){var t=v('n_t').trim();if(!t)return;S.notes.push({id:uid(),dat
 function delN(id){S.notes=S.notes.filter(function(n){return n.id!==id});save();render()}
 
 migrate();applyTheme(theme);render();
+/* автосохранение: защищённое хранилище + запасная копия + восстановление */
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persisted().then(function(p){if(!p)navigator.storage.persist()})}catch(e){}
+(function(){try{fget('__state__').then(function(b){if(!b)return b;return b.text()}).then(function(t){
+  if(!t){if(S.projects.length)save();return}
+  var d=JSON.parse(t);
+  if(!hadLocal&&d&&Array.isArray(d.projects)&&d.projects.length){S=Object.assign({projects:[],expenses:[],notes:[],cur:'₽'},d);migrate();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast('Данные восстановлены из запасной копии','Ок',hideToast)}
+  else if(S.projects.length)save()}).catch(function(){})}catch(e){}})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
 </script>
 </body>
