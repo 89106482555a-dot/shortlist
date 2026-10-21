@@ -16,6 +16,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+.fnote{margin:18px 4px 6px;font-size:11px;line-height:1.45;color:var(--mut);text-align:center}
+
+.ntg{margin:12px 0 2px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.nt.sub span{color:var(--tx);font-weight:600}.nt.sub b{color:var(--bad)}
+
+/* налог и АК */
+.nt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid var(--hair,var(--line));font-size:13.5px}
+.nt span{min-width:0;color:var(--mut)}
+.nt b{white-space:nowrap}
+.nt.tot{border-bottom:0;padding-top:10px}
+.nt.tot span{color:var(--tx);font-weight:600}
+.nt.tot b{font-size:18px;color:var(--ac)}
+.tgl{display:flex!important;align-items:center;gap:8px;min-height:42px;padding:0 12px;border:1px solid var(--hair,var(--line));border-radius:10px;cursor:pointer;text-transform:none!important;letter-spacing:0!important;font-size:14px!important;color:var(--tx)!important;margin:0 0 8px!important}
+.tgl input{width:18px;height:18px;margin:0;accent-color:var(--ac);flex:none}
 
 /* поиск по дате, открытие по нажатию, подсветка сохранённого */
 .dq{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -1338,7 +1352,7 @@ function syncPaid(p){p.paid=(p.payments||[]).reduce(function(a,x){return a+(+x.a
 var RDEF=[['Ответ на заявку','Здравствуйте! Спасибо, что обратились 🤍\nДата {дата} пока свободна. Отправляю прайс и условия. Если появятся вопросы, с радостью отвечу!'],['Бронь даты и договор','{имена}, бронирую за вами {дата}!\nЧтобы закрепить дату, нужна предоплата. Договор во вложении: посмотрите, пожалуйста, и пришлите подписанный.'],['Напоминание об оплате','Здравствуйте, {имена}! Напоминаю про оплату по съёмке {дата}: остаток {остаток}. Спасибо!'],['Перед съёмкой','{имена}, до съёмки совсем немного! Пришлите, пожалуйста, финальный тайминг и контакт организатора. До встречи {дата} 📸'],['Материалы готовы','{имена}, всё готово! 🎬\nСсылка на материалы: \nБуду очень рада отзыву 🤍']];
 var QDEF=['Как вы познакомились? Расскажите вашу историю','Что для вас самое важное в этом дне?','Кого из гостей обязательно снять (родители, бабушки, лучшие друзья)?','Какие будут особые моменты: клятвы, письма, сюрпризы, первый танец?','Где будут сборы и во сколько?','Контакты организатора и ведущего','Какая музыка вам нравится? Можно прислать 2–3 трека для фильма','Какой стиль съёмки вам близок? Пришлите референсы','Есть ли что-то, что точно не нужно снимать?','Дополнительные пожелания'];
 var TPLT={'Свадьба':[['09:00','Сборы невесты'],['11:00','Сборы жениха'],['12:30','Первый взгляд'],['14:00','Регистрация'],['15:00','Прогулка и фотосессия'],['18:00','Банкет'],['20:30','Первый танец'],['22:00','Торт'],['23:00','Завершение съёмки']],'Love story':[['16:00','Встреча на локации'],['16:30','Съёмка, первая локация'],['18:00','Переезд'],['18:30','Золотой час'],['19:30','Завершение']],'Клип':[['08:00','Сбор команды, выставление света'],['09:00','Грим, образы'],['10:00','Съёмка сцен'],['14:00','Обед'],['15:00','Съёмка, вторая локация'],['20:00','Завершение']],'Репортаж':[['10:00','Приезд, детали площадки'],['11:00','Начало мероприятия'],['14:00','Ключевые моменты'],['17:00','Завершение']]};
-function migrate(){if(!Array.isArray(S.quizQ))S.quizQ=QDEF.slice();if(!Array.isArray(S.replies))S.replies=RDEF.map(function(x){return {id:uid(),title:x[0],text:x[1],files:[]}});if(!Array.isArray(S.gear))S.gear=GEAR.slice();if(!Array.isArray(S.packs))S.packs=[];S.projects.forEach(function(p){if(!Array.isArray(p.payments))p.payments=(+p.paid>0)?[{id:uid(),amount:+p.paid,date:p.date||today(),note:'Оплата'}]:[];if(!Array.isArray(p.tasks))p.tasks=tplFor(p.type);if(!p.gearDone||typeof p.gearDone!=='object')p.gearDone={};if(!Array.isArray(p.timing))p.timing=[];if(!p.quiz||typeof p.quiz!=='object')p.quiz={};syncPaid(p)})}
+function migrate(){if(S.tax&&S.tax.ipdr==null){S.tax.ipdr=15;S.tax.ipType='d'}if(!S.tax||typeof S.tax!=='object')S.tax={mode:'npd',npdP:4,npdL:6,ip:6,ak:10,ipFix:57390,ipType:'d',ipdr:15,ipAll:false};if(!Array.isArray(S.quizQ))S.quizQ=QDEF.slice();if(!Array.isArray(S.replies))S.replies=RDEF.map(function(x){return {id:uid(),title:x[0],text:x[1],files:[]}});if(!Array.isArray(S.gear))S.gear=GEAR.slice();if(!Array.isArray(S.packs))S.packs=[];S.projects.forEach(function(p){if(!Array.isArray(p.payments))p.payments=(+p.paid>0)?[{id:uid(),amount:+p.paid,date:p.date||today(),note:'Оплата'}]:[];if(!Array.isArray(p.tasks))p.tasks=tplFor(p.type);if(!p.gearDone||typeof p.gearDone!=='object')p.gearDone={};if(!Array.isArray(p.timing))p.timing=[];if(!p.quiz||typeof p.quiz!=='object')p.quiz={};syncPaid(p)})}
 var THEMES=[['snova','СНОВА','плёнка и огонь','radial-gradient(60% 70% at 85% 10%,#c2501f,transparent 70%),#0D0F0C'],['dream','Dream','боке и каллиграфия','radial-gradient(40% 40% at 20% 15%,#d6e0e4,transparent 70%),radial-gradient(40% 40% at 80% 90%,#c5d3dc,transparent 70%),#22354D'],['ocean','Ocean','тёмная вода','linear-gradient(180deg,#25435f,#071321)'],['poster','Красный постер','олива и киноварь','radial-gradient(60% 60% at 20% 30%,#7a4426,transparent 70%),linear-gradient(135deg,#E8382C 0 18%,#171A15 18%)'],['flow','Flow','боке, лайм и розовый','radial-gradient(35% 35% at 20% 20%,rgba(255,248,238,.9),transparent 70%),radial-gradient(30% 30% at 85% 80%,rgba(244,206,214,.8),transparent 70%),linear-gradient(100deg,transparent 30%,rgba(230,236,154,.85) 50%,transparent 70%),#C8B9A7'],['gold','Золотой час','бумага и золото','radial-gradient(70% 90% at 100% 0%,#e2a050,transparent 60%),#F3EDE3']];
 var theme='snova',showTheme=false,showMore=false;
 function toggleMore(){showMore=!showMore;render()}try{var _t=localStorage.getItem('shotlist_theme');if(_t&&THEMES.some(function(x){return x[0]===_t}))theme=_t}catch(e){}
@@ -1469,6 +1483,8 @@ function vProjects(){
     +'<div class="g2"><div><label>Сдача монтажа</label><input type="date" id="f_dd" value="'+esc(p.deadline)+'"></div><div><label>Напоминание</label>'+warnSel(p.dwarn).replace('id="f_w"','id="f_dw"')+'</div></div>'
     +'<div class="g2"><div><label>Телефон</label><input id="f_ph" type="tel" placeholder="+7 900 000-00-00" value="'+esc(p.phone)+'"></div><div><label>Telegram</label><input id="f_tg" placeholder="@username" value="'+esc(p.tg)+'"></div></div>'
     +'<label>Организаторы</label><input id="f_o" value="'+esc(p.org)+'">'
+    +'<div class="g2"><div><label>Налог</label><label class="tgl"><input type="checkbox" id="f_tx"'+(p.taxOn?' checked':'')+' onchange="document.getElementById(\'f_clw\').style.display=this.checked?\'\':\'none\'"><span>Учитывать налог</span></label></div><div><label>Агентская комиссия</label><label class="tgl"><input type="checkbox" id="f_ak"'+(p.ak?' checked':'')+'><span>АК '+((S.tax||{}).ak||10)+'%</span></label></div></div>'
+    +'<div id="f_clw"'+(p.taxOn?'':' style="display:none"')+'><label>Клиент (влияет на ставку)</label><select id="f_cl"><option value="person"'+(p.client!=='company'?' selected':'')+'>Физлицо (пара)</option><option value="company"'+(p.client==='company'?' selected':'')+'>Компания / ИП</option></select></div>'
     +'<div class="g2"><div><label>Сумма проекта</label><input type="number" id="f_a" value="'+esc(p.amount)+'"></div><div>'+(editId?'<label>Оплачено</label><input disabled value="'+esc(money(p.paid))+' · в карточке">':'<label>Предоплата</label><input type="number" id="f_p" placeholder="0">')+'</div></div>'
     +'<div class="g2"><div><label>Монтажей</label><input type="number" id="f_et" value="'+esc(p.editsTotal==null?1:p.editsTotal)+'"></div><div><label>Готово</label><input type="number" id="f_ed" value="'+esc(p.editsDone||0)+'"></div></div>'
     +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea id="f_x" rows="3">'+esc(p.extra)+'</textarea>'
@@ -1526,6 +1542,7 @@ function vDetail(p){
   } else if(tm.length){var ni=p.date===today()?curTiming(tm):-1;h+='<div class="mut" style="margin-top:6px">'+(ni>=0?'Сейчас: '+esc(tm[ni].n)+(tm[ni+1]?' · далее '+esc(tm[ni+1].t)+' '+esc(tm[ni+1].n):''):tm.slice(0,3).map(function(x){return esc(x.t)+' '+esc(x.n)}).join(' · ')+(tm.length>3?' …':''))+'</div>'}
   h+='</div>';
   // анкета пары
+  if(!p.quiz)p.quiz={};if(!p.timing)p.timing=[];if(!p.tasks)p.tasks=[];if(!p.gearDone)p.gearDone={};if(!p.payments)p.payments=[];
   var qa=S.quizQ.filter(function(q){return (p.quiz[q]||'').trim()}).length;
   h+='<div class="card">'+sh('quiz','Анкета пары','отвечено '+qa+'/'+S.quizQ.length);
   if(secO.quiz){
@@ -1536,6 +1553,16 @@ function vDetail(p){
       h+='<div class="row" style="margin-top:6px"><button class="btn" onclick="shareQuiz(\''+p.id+'\')">Отправить вопросы паре</button><button class="btn s" onclick="quizEdit=true;render()">Изменить вопросы</button></div>';
     }
   } else h+='<div class="mut" style="margin-top:6px">'+(qa?'Ответы есть на '+qa+' из '+S.quizQ.length+' вопросов':'Анкета ещё не заполнена')+'</div>';
+  h+='</div>';
+  var cp=calcP(p),tr=taxRate(p),ar=akRate(p);
+  h+='<div class="card">'+sh('net','На руках',money2(cp.net)+' из '+money(p.amount));
+  if(secO.net){h+='<div class="nt"><span>Сумма проекта</span><b>'+money(p.amount)+'</b></div>'
+    +(tr?'<div class="nt"><span>Налог '+tr+'% · '+taxName()+(S.tax.mode==='npd'?(p.client==='company'?', компания':', физлицо'):'')+'</span><b class="bad">−'+money2(cp.tax)+'</b></div>':'<div class="nt"><span>Налог не учитывается</span><b>—</b></div>')
+    +(ar?'<div class="nt"><span>Агентская комиссия '+ar+'%</span><b class="bad">−'+money2(cp.ak)+'</b></div>':'')
+    +(cp.exp?'<div class="nt"><span>Расходы по проекту</span><b class="bad">−'+money(cp.exp)+'</b></div>':'')
+    +'<div class="nt tot"><span>Остаётся на руках</span><b>'+money2(cp.net)+'</b></div>'
+    +'<div class="mut" style="margin-top:6px">Налог и АК включаются в проекте через «Изменить». Ставки меняются во вкладке «Бюджет».</div>'}
+  else h+='<div class="mut" style="margin-top:6px">'+(tr?'налог '+money2(cp.tax):'без налога')+(ar?' · АК '+money2(cp.ak):'')+(cp.exp?' · расходы '+money(cp.exp):'')+'</div>';
   h+='</div>';
   h+='<div class="card">'+sh('pay','Оплата',money(p.paid)+' из '+money(p.amount))+'<div class="bar" style="margin:'+(secO.pay?'0 0 8px':'10px 0 0')+'"><i style="width:'+pc+'%"></i></div>';
   if(secO.pay){
@@ -1690,8 +1717,57 @@ function fOpen(id){var meta=null;S.replies.forEach(function(r){(r.files||[]).for
     var u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';if(!/pdf|image|text/.test(f.type))a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},60000)
   }).catch(function(){toast('Не удалось открыть файл','Ок',hideToast)})}
 
+/* налоги и агентская комиссия */
+function taxRate(p){var t=S.tax||{};if(t.mode==='none'||!p||!p.taxOn)return 0;if(t.mode==='ip')return +t.ip||0;return p&&p.client==='company'?(+t.npdL||0):(+t.npdP||0)}
+function akRate(p){return p&&p.ak?(+(S.tax||{}).ak||0):0}
+function money2(n){return money(Math.round(n))}
+function calcP(p,base){var b=base==null?(+p.amount||0):base,tx=b*taxRate(p)/100,ak=b*akRate(p)/100,ex=S.expenses.filter(function(e){return e.pid===p.id}).reduce(function(a,e){return a+(+e.amount||0)},0);return {tax:tx,ak:ak,exp:ex,net:b-tx-ak-(base==null?ex:0)}}
+function taxName(){var t=S.tax||{};return t.mode==='ip'?'ИП УСН':t.mode==='none'?'без налога':'самозанятость'}
+function setTax(k,val){S.tax[k]=(k==='mode'||k==='ipType')?val:(+val||0);save();render()}
+function taxCard(){var t=S.tax;
+  var sum=taxName()+(t.mode==='ip'?' «'+(t.ipType==='dr'?'Д−Р» '+t.ipdr:'Доходы» '+t.ip)+'%':t.mode==='npd'?' '+t.npdP+'/'+t.npdL+'%':'')+' · АК '+t.ak+'%';
+  var o=!!secO.taxset;
+  var h='<div class="card"><button class="sec sx'+(o?'':' cl')+'" onclick="secO.taxset=!secO.taxset;render()" aria-expanded="'+o+'"><span>Налог и комиссия</span><small>'+(o?'':esc(sum)+' ')+'<svg class="chev'+(o?' up':'')+'" viewBox="0 0 12 12"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></small></button>';
+  if(!o)return h+'<div class="mut" style="margin-top:6px">Нажми, чтобы изменить режим, ставки или АК</div></div>';
+  h+=''
+  +'<label>Налоговый режим</label><select onchange="setTax(\'mode\',this.value)"><option value="npd"'+(t.mode==='npd'?' selected':'')+'>Самозанятость (НПД)</option><option value="ip"'+(t.mode==='ip'?' selected':'')+'>ИП на УСН «Доходы»</option><option value="none"'+(t.mode==='none'?' selected':'')+'>Не считать налог</option></select>';
+  if(t.mode==='npd')h+='<div class="g2"><div><label>С физлиц, %</label><input type="number" step="0.1" value="'+t.npdP+'" onchange="setTax(\'npdP\',this.value)"></div><div><label>С компаний и ИП, %</label><input type="number" step="0.1" value="'+t.npdL+'" onchange="setTax(\'npdL\',this.value)"></div></div><div class="mut">Налог включается галочкой «Учитывать налог» в проекте, ставка зависит от типа клиента. Обычно пары платят как физлица (4%), агентства и компании как юрлица (6%).</div>';
+  if(t.mode==='ip')h+='<label>Объект УСН</label><select onchange="setTax(\'ipType\',this.value)"><option value="d"'+(t.ipType!=='dr'?' selected':'')+'>«Доходы»</option><option value="dr"'+(t.ipType==='dr'?' selected':'')+'>«Доходы минус расходы»</option></select>'
+   +'<div class="g2"><div><label>Ставка, %</label><input type="number" step="0.1" value="'+(t.ipType==='dr'?t.ipdr:t.ip)+'" onchange="setTax(\''+(t.ipType==='dr'?'ipdr':'ip')+'\',this.value)"></div><div><label>Фикс. взносы, ₽</label><input type="number" value="'+t.ipFix+'" onchange="setTax(\'ipFix\',this.value)"></div></div>'
+   +'<label class="tgl" style="margin-top:2px"><input type="checkbox"'+(t.ipAll?' checked':'')+' onchange="S.tax.ipAll=this.checked;save();render()"><span>Считать доходом все поступления, а не только проекты с галочкой налога</span></label>'
+   +'<div class="mut">В 2026 году фиксированные взносы ИП 57 390 ₽, плюс 1% с дохода сверх 300 000 ₽. Подробный расчёт ниже, в блоке «Расчёт ИП».</div>';
+  h+='<div class="g2" style="margin-top:10px"><div><label>АК, %</label><input type="number" step="0.1" value="'+t.ak+'" onchange="setTax(\'ak\',this.value)"></div><div></div></div><div class="mut">Комиссия включается галочкой «АК» в проекте и считается от полной суммы проекта.</div><button class="btn s full" style="margin-top:12px" onclick="secO.taxset=false;render()">Готово, свернуть</button></div>';
+  return h}
+function ipYear(y){var t=S.tax;y=String(y||new Date().getFullYear());var inc=0,ak=0;
+  S.projects.forEach(function(p){if(!t.ipAll&&!p.taxOn)return;(p.payments||[]).forEach(function(x){if(String(x.date).slice(0,4)===y){var a=+x.amount||0;inc+=a;ak+=a*akRate(p)/100}})});
+  var exp=S.expenses.filter(function(e){return String(e.date).slice(0,4)===y}).reduce(function(a,e){return a+(+e.amount||0)},0);
+  var dr=t.ipType==='dr',fix=+t.ipFix||0;
+  var onePctBase=dr?Math.max(0,inc-exp-ak):inc,one=Math.min(Math.max(0,(onePctBase-300000)*0.01),321818),contr=fix+one;
+  var usn,minTax=0,pay;
+  if(dr){var base=Math.max(0,inc-exp-ak-contr);usn=base*(+t.ipdr||0)/100;minTax=inc*0.01;pay=Math.max(usn,minTax)}
+  else{usn=inc*(+t.ip||0)/100;pay=Math.max(0,usn-contr)}
+  return {y:y,inc:inc,exp:exp,ak:ak,fix:fix,one:one,contr:contr,usn:usn,minTax:minTax,pay:pay,dr:dr,total:pay+contr,net:inc-exp-ak-pay-contr}}
+function ipCard(){var c=ipYear(),t=S.tax;
+  var row=function(a,b,cls){return '<div class="nt'+(cls?' '+cls:'')+'"><span>'+a+'</span><b'+(cls==='m'?' class="bad"':'')+'>'+b+'</b></div>'};
+  var h='<div class="card"><div class="sec">Расчёт ИП<small>'+c.y+' · УСН '+(c.dr?'«Д−Р» '+t.ipdr+'%':'«Доходы» '+t.ip+'%')+'</small></div>'
+   +row('Доход за год',money2(c.inc))
+   +row('Расходы за год',money2(c.exp),'m')
+   +(c.ak?row('Агентская комиссия',money2(c.ak),'m'):'')
+   +'<div class="ntg">Взносы</div>'
+   +row('Фиксированные взносы',money2(c.fix),'m')
+   +row('1% с '+(c.dr?'дохода за вычетом расходов':'дохода')+' сверх 300 000 ₽',money2(c.one),'m')
+   +'<div class="ntg">Налог</div>'
+   +(c.dr?row('Налог '+t.ipdr+'% с (доход − расходы − АК − взносы)',money2(c.usn))+row('Минимальный налог 1% с дохода',money2(c.minTax))
+         :row('Налог '+t.ip+'% с дохода',money2(c.usn))+row('Уменьшение на взносы',money2(Math.min(c.usn,c.contr))))
+   +row('Налог к уплате',money2(c.pay),'m')
+   +row('Налоги и взносы всего',money2(c.total),'sub')
+   +row('Остаётся на руках',money2(c.net),'tot')
+   +'<div class="mut" style="margin-top:6px">'+(c.dr?'При «Д−Р» платится большее из двух: налог по ставке или минимальный 1% с дохода. Расходы, АК и взносы уменьшают базу.':'При «Доходах» расходы налог не уменьшают, но ИП без сотрудников уменьшает налог на всю сумму взносов.')+' Доход считается по датам оплат за этот год.</div></div>';
+  return h}
+function aggPaid(){var tx=0,ak=0;S.projects.forEach(function(p){var c=calcP(p,+p.paid||0);tx+=c.tax;ak+=c.ak});return {tax:tx,ak:ak}}
+
 function saveProject(){
-  var o={names:v('f_n'),date:v('f_d'),place:v('f_pl'),org:v('f_o'),type:v('f_t'),status:v('f_s'),warn:+v('f_w'),deadline:v('f_dd'),dwarn:+v('f_dw'),phone:v('f_ph').trim(),tg:v('f_tg').trim(),extra:v('f_x'),amount:+v('f_a')||0,editsTotal:+v('f_et')||0,editsDone:+v('f_ed')||0};
+  var o={names:v('f_n'),date:v('f_d'),place:v('f_pl'),org:v('f_o'),type:v('f_t'),status:v('f_s'),warn:+v('f_w'),deadline:v('f_dd'),dwarn:+v('f_dw'),phone:v('f_ph').trim(),tg:v('f_tg').trim(),extra:v('f_x'),client:v('f_cl'),taxOn:document.getElementById('f_tx').checked,ak:document.getElementById('f_ak').checked,amount:+v('f_a')||0,editsTotal:+v('f_et')||0,editsDone:+v('f_ed')||0};
   var pkEl=document.getElementById('f_pk');if(pkEl){o.packId=pkEl.value;var pkO=S.packs.find(function(k){return k.id===pkEl.value});o.pack=pkO?pkO.name:''}
   var id=editId;
   if(editId){var p=S.projects.find(function(x){return x.id===editId});var tch=p.type!==o.type&&!(p.tasks||[]).some(function(t){return t.done});Object.assign(p,o);if(tch)p.tasks=tplFor(o.type)}
@@ -1699,7 +1775,7 @@ function saveProject(){
   var wasEdit=!!editId;
   openId=wasEdit?id:null;justSaved=wasEdit?null:id;
   if(o.date){selDay=o.date;calM=o.date.slice(0,7)}
-  showForm=false;editId=null;save();render();
+  showForm=false;editId=null;migrate();save();render();
   if(!wasEdit){fq='';fdt='';fs='';ft='';render();var el=document.querySelector('.swp[data-id="'+id+'"]');if(el)el.scrollIntoView({block:'center',behavior:'smooth'});
     toast('Проект «'+(o.names||'Без названия')+'» сохранён','Открыть',function(){hideToast();openP(id)});setTimeout(function(){justSaved=null;var c=document.querySelector('.swc.saved');if(c)c.classList.remove('saved')},2600)}
   else toast('Изменения сохранены','Ок',hideToast);
@@ -1757,10 +1833,15 @@ function vBudget(){
   var tot=0,paid=0,exp=0;
   S.projects.forEach(function(p){tot+=+p.amount||0;paid+=+p.paid||0});
   S.expenses.forEach(function(e){exp+=+e.amount||0});
+  var ag=aggPaid(),ipy=S.tax.mode==='ip'?ipYear():null,txv=ipy?ipy.pay+ipy.contr:ag.tax;
   var h='<div class="sum"><div class="card"><span class="mut">Сумма проектов</span><b>'+money(tot)+'</b></div>'
   +'<div class="card"><span class="mut">Получено</span><b class="ok">'+money(paid)+'</b></div>'
   +'<div class="card"><span class="mut">Расходы</span><b class="bad">'+money(exp)+'</b></div>'
-  +'<div class="card"><span class="mut">Чистая прибыль</span><b>'+money(paid-exp)+'</b></div></div>'
+  +'<div class="card"><span class="mut">Чистая прибыль</span><b>'+money2(paid-exp-txv-ag.ak)+'</b></div></div>'
+  +(ipy?ipCard():'<div class="card"><div class="nt"><span>Налог с полученных денег · '+taxName()+'</span><b class="bad">−'+money2(txv)+'</b></div>'
+  +'<div class="nt"><span>Агентская комиссия</span><b class="bad">−'+money2(ag.ak)+'</b></div>'
+  +'<div class="mut" style="margin-top:4px">Чистая прибыль = получено − расходы − налог − АК</div></div>')
+  +taxCard()
   +'<div class="card"><span class="mut">Ещё ждём оплат: </span><b>'+money(tot-paid)+'</b></div>'
   +'<div class="card"><b>Добавить расход</b><div class="g2" style="margin-top:8px"><div><input id="e_t" placeholder="На что"></div><div><input id="e_a" type="number" placeholder="Сумма"></div></div>'
   +'<div class="g2"><div><input type="date" id="e_d" value="'+today()+'"></div><div><select id="e_p"><option value="">Общий расход</option>'
@@ -1776,6 +1857,7 @@ function vBudget(){
     h+='<div class="card row"><div><b>'+esc(e.title||'Расход')+'</b><div class="mut">'+fd(e.date)+(p?' · '+esc(p.names):'')+'</div></div>'
     +'<div><span class="bad">−'+money(e.amount)+'</span> <button class="btn s" onclick="delE(\''+e.id+'\')">✕</button></div></div>';
   });
+  h+='<div class="fnote">* Это оценка для планирования. Точные суммы лучше сверять с бухгалтером или банковским сервисом для ИП.</div>';
   return h;
 }
 function addExp(){
