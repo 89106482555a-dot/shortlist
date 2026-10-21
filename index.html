@@ -17,6 +17,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
 
+/* поиск по дате, открытие по нажатию, подсветка сохранённого */
+.dq{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dq input{flex:0 0 46px;width:46px;margin:0;padding:0;min-height:42px;color:transparent;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='1.6'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='3'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:20px}
+.dq input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.dq input{position:relative}
+.dq input::-webkit-datetime-edit{opacity:0}
+.dql{flex:1;min-width:0;color:var(--mut);font-size:13px}
+.swc{cursor:pointer}
+.go{font-size:26px;line-height:1;color:var(--mut);padding:0 4px}
+@keyframes svd{0%{box-shadow:0 0 0 0 var(--ac)}30%{box-shadow:0 0 0 3px var(--ac)}100%{box-shadow:0 0 0 0 transparent}}
+.swc.saved{animation:svd 2.4s ease-out}
+
 /* перенос */
 .adv{margin-top:14px;border-top:1px solid var(--hair,var(--line));padding-top:10px}
 .adv summary{cursor:pointer;color:var(--mut);font-size:12.5px;margin-bottom:8px}
@@ -1317,7 +1329,7 @@ input[type=date]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:n
 <div id="view"></div>
 </div></div>
 <script>
-var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 try{var raw=localStorage.getItem(KEY);if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1462,23 +1474,23 @@ function vProjects(){
     +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea id="f_x" rows="3">'+esc(p.extra)+'</textarea>'
     +'<div class="row"><button class="btn" onclick="saveProject()">Сохранить</button><button class="btn s" onclick="showForm=false;openId=editId;editId=null;render()">Отмена</button></div></div>';
   } else h+='<button class="btn full" style="margin-bottom:12px" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button>';
-  if(!showForm&&S.projects.length)h+='<input id="f_q" placeholder="Поиск: имя, место, организатор" value="'+esc(fq)+'" oninput="setQ(this.value)"><div class="g2"><select onchange="fs=this.value;render()"><option value="">Все статусы</option>'+STAT.map(function(o){return '<option'+(o===fs?' selected':'')+'>'+o+'</option>'}).join('')+'</select><select onchange="ft=this.value;render()"><option value="">Все типы</option>'+TYPES.map(function(o){return '<option'+(o===ft?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
+  if(!showForm&&S.projects.length)h+='<input id="f_q" placeholder="Поиск: имя, место, организатор" value="'+esc(fq)+'" oninput="setQ(this.value)"><div class="dq"><input type="date" id="f_dt" value="'+esc(fdt)+'" onchange="fdt=this.value;render()"><span class="dql">'+(fdt?'Съёмки '+fd(fdt):'Поиск по дате')+'</span>'+(fdt?'<button class="btn s" onclick="fdt=\'\';render()">Сбросить</button>':'')+'</div><div class="g2"><select onchange="fs=this.value;render()"><option value="">Все статусы</option>'+STAT.map(function(o){return '<option'+(o===fs?' selected':'')+'>'+o+'</option>'}).join('')+'</select><select onchange="ft=this.value;render()"><option value="">Все типы</option>'+TYPES.map(function(o){return '<option'+(o===ft?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
   var q=fq.toLowerCase();
-  var L=S.projects.filter(function(p){return (!fs||(p.status||'Заявка')===fs)&&(!ft||p.type===ft)&&(!q||[p.names,p.place,p.org,p.extra,p.phone,p.tg].join(' ').toLowerCase().indexOf(q)>=0)}).sort(function(a,b){return (a.date||'9').localeCompare(b.date||'9')});
-  if(!L.length&&!showForm)h+='<div class="empty">Проектов пока нет</div>';
+  var L=S.projects.filter(function(p){return (!fdt||p.date===fdt)&&(!fs||(p.status||'Заявка')===fs)&&(!ft||p.type===ft)&&(!q||[p.names,p.place,p.org,p.extra,p.phone,p.tg].join(' ').toLowerCase().indexOf(q)>=0)}).sort(function(a,b){return (a.date||'9').localeCompare(b.date||'9')});
+  if(!L.length&&!showForm)h+='<div class="empty">'+(fdt?'На '+fd(fdt)+' проектов нет':S.projects.length?'Ничего не найдено':'Проектов пока нет')+'</div>';
   else if(!showForm)h+='<div class="mut swhint">← смахни проект влево, чтобы удалить</div>';
   L.forEach(function(p){
     var rest=(+p.amount||0)-(+p.paid||0), nn=S.notes.filter(function(n){return n.date&&n.date===p.date}).length;
     var pc=p.amount>0?Math.min(100,Math.round(p.paid/p.amount*100)):0;
     var dn=(p.tasks||[]).filter(function(t){return t.done}).length;
-    h+='<div class="swp" data-id="'+p.id+'"><button class="swdel" onclick="swDel(\''+p.id+'\')" aria-label="Удалить проект"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="card swc"><div class="row"><b>'+esc(p.names||'Без названия')+'</b><span class="mut">'+fd(p.date)+'</span></div>'
+    h+='<div class="swp" data-id="'+p.id+'"><button class="swdel" onclick="swDel(\''+p.id+'\')" aria-label="Удалить проект"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="card swc'+(p.id===justSaved?' saved':'')+'" onclick="openP(\''+p.id+'\')"><div class="row"><b>'+esc(p.names||'Без названия')+'</b><span class="mut">'+fd(p.date)+'</span></div>'
     +'<div style="margin:4px 0">'+chipT(p)+' <span class="chip st">'+esc(p.status||'Заявка')+'</span></div>'
     +'<div class="mut"><span class="k">Место</span>'+esc(p.place||'—')+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
     +(p.extra?'<div class="mut"><span class="k">Детали</span>'+esc(p.extra)+'</div>':'')
     +'<div class="row" style="margin-top:6px"><span>'+money(p.amount)+'</span><span class="'+(rest>0?'bad':'ok')+'">'+(rest>0?'остаток '+money(rest):'оплачено')+'</span></div>'
     +'<div class="bar"><i style="width:'+pc+'%"></i></div>'
     +'<div class="row mut" style="margin-top:6px"><span>Задачи '+dn+'/'+(p.tasks||[]).length+' · монтажи '+(+p.editsDone||0)+'/'+(+p.editsTotal||0)+(p.deadline?' · сдача '+fd(p.deadline):'')+(nn?' · заметок: '+nn:'')+'</span>'
-    +'<span><button class="btn s" onclick="openP(\''+p.id+'\')">Открыть</button></span></div></div></div>';
+    +'<span class="go">›</span></div></div></div>';
   });
   return h;
 }
@@ -1684,9 +1696,13 @@ function saveProject(){
   var id=editId;
   if(editId){var p=S.projects.find(function(x){return x.id===editId});var tch=p.type!==o.type&&!(p.tasks||[]).some(function(t){return t.done});Object.assign(p,o);if(tch)p.tasks=tplFor(o.type)}
   else{var pre=+v('f_p')||0;o.id=id=uid();o.payments=pre>0?[{id:uid(),amount:pre,date:today(),note:'Предоплата'}]:[];o.tasks=tplFor(o.type);o.gearDone={};syncPaid(o);S.projects.push(o)}
-  openId=id;
+  var wasEdit=!!editId;
+  openId=wasEdit?id:null;justSaved=wasEdit?null:id;
   if(o.date){selDay=o.date;calM=o.date.slice(0,7)}
   showForm=false;editId=null;save();render();
+  if(!wasEdit){fq='';fdt='';fs='';ft='';render();var el=document.querySelector('.swp[data-id="'+id+'"]');if(el)el.scrollIntoView({block:'center',behavior:'smooth'});
+    toast('Проект «'+(o.names||'Без названия')+'» сохранён','Открыть',function(){hideToast();openP(id)});setTimeout(function(){justSaved=null;var c=document.querySelector('.swc.saved');if(c)c.classList.remove('saved')},2600)}
+  else toast('Изменения сохранены','Ок',hideToast);
 }
 function editP(id){tab='projects';openId=null;editId=id;showForm=true;render();window.scrollTo(0,0)}
 function delP(id){if(armed!==id){armed=id;render();return}armed=null;S.projects=S.projects.filter(function(p){return p.id!==id});save();render()}
