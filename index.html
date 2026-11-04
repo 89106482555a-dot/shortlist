@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0D0F0C">
 <meta name="description" content="ShotList — планер для видеографов и фотографов">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,6 +16,60 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+
+/* поделиться проектом */
+.npr{display:flex;gap:8px;margin-bottom:12px}
+.npr .btn{flex:1}
+.npr .fpick{flex:0 0 auto;justify-content:center;align-items:center;padding:0 14px}
+.shp .tgl{margin:0 0 6px!important}
+.shk span{display:flex;flex-direction:column}
+.shk small{font-size:11px;color:var(--mut);margin-top:1px}
+.btn.s.on{background:var(--pri);color:var(--priTx);border-color:var(--pri)}
+
+/* без приближения: как в приложении */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{touch-action:manipulation;overscroll-behavior-y:none}
+button,a,label,.swc,.day{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media (max-width:719px){input,select,textarea{font-size:16px!important}}
+
+/* проекты: компактный список */
+.pf{display:flex;gap:8px;margin-bottom:8px}
+.pfs{flex:1;min-width:0;position:relative}
+.pfs svg,.pfd svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.pfs svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none}
+.pfs input{margin:0;padding-left:38px;min-height:42px}
+.pfd{position:relative;flex:none;display:flex!important;align-items:center;gap:6px;padding:0 12px;min-height:42px;margin:0!important;border:1px solid var(--hair,var(--line));border-radius:12px;color:var(--mut)!important;font-size:13px!important;letter-spacing:0!important;text-transform:none!important;cursor:pointer;background:var(--card)}
+.pfd.on{color:var(--ac)!important;border-color:var(--ac)}
+.pfd input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;width:100%;min-height:0}
+.pfx{flex:none;width:42px;border:1px solid var(--hair,var(--line));border-radius:12px;background:var(--card);color:var(--mut);cursor:pointer}
+.pch{display:flex;gap:6px;overflow-x:auto;margin:0 -2px 6px;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pch::-webkit-scrollbar{display:none}
+.pc1{flex:none;padding:6px 12px;border-radius:99px;border:1px solid var(--hair,var(--line));background:transparent;color:var(--mut);font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap;margin:0;width:auto}
+.pc1.on{background:var(--pri);color:var(--priTx);border-color:var(--pri)}
+.pc1.sel{padding:6px 10px;min-height:0;-webkit-appearance:none;appearance:none}
+.pmh{margin:14px 4px 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.pmh span{opacity:.6}
+.swhint{text-align:center;font-size:11px;opacity:.6;margin:0 0 6px}
+.card.pcard{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px 14px;position:relative;overflow:hidden}
+.pcard.past{opacity:.62}
+.pdt{text-align:center;line-height:1;border-right:1px solid var(--hair,var(--line));padding-right:12px}
+.pdt b{display:block;font-size:24px;font-weight:700;letter-spacing:-.03em;color:var(--tx)}
+.pdt span{display:block;margin-top:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.pmain{min-width:0}
+.pnm{font-size:15.5px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
+.pmeta{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:12.5px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmeta i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--c)}
+.ptags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.pst,.ped{font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:99px;border:1px solid var(--hair,var(--line));color:var(--mut);line-height:1.2}
+.pst{color:var(--ac);border-color:currentColor}
+.ped.done{color:var(--ok)}.ped.late{color:var(--bad);border-color:currentColor}
+.psum{text-align:right;white-space:nowrap}
+.psum b{display:block;font-size:14.5px;font-weight:700;color:var(--tx)}
+.psum span{display:block;margin-top:3px;font-size:11.5px}
+.pbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hair,var(--line))}
+.pbar i{display:block;height:100%;background:var(--ac)}
+/* нижняя панель: 6 кнопок */
+@media (max-width:719px){body .tabs button .lb{font-size:9.5px;letter-spacing:0}body .tabs button{padding:7px 0 6px}}
 
 .banner.bk{display:flex;align-items:center;gap:10px}
 .banner.bk span{flex:1;min-width:0;cursor:pointer}
@@ -1380,7 +1434,7 @@ function setTab(t){tab=t;showMore=false;showForm=false;editId=null;openId=null;g
 function render(){
   var tl=S.projects.reduce(function(a,p){return a+left(p)},0);
   var np=S.projects.filter(function(p){return left(p)>0}).length;
-  document.getElementById('banner').innerHTML=tl>0?'<div class="banner">Осталось монтажей: '+tl+'<small>в проектах: '+np+'</small></div>':'';
+  document.getElementById('banner').innerHTML=tl>0&&tab==='edits'?'<div class="banner">Осталось монтажей: '+tl+'<small>в проектах: '+np+'</small></div>':'';
   document.getElementById('banner').innerHTML+=alerts();
   var _n=new Date(),_sh=('0'+_n.getDate()).slice(-2)+String.fromCharCode(92)+('0'+(_n.getMonth()+1)).slice(-2),_lg=_n.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}).replace(' г.','');
   document.querySelectorAll('.hero').forEach(function(hh){hh.style.display=(tab==='cal'&&hh.getAttribute('data-th')===theme)?'':'none';var sb=hh.querySelector('[data-sub]');if(sb)sb.textContent=hh.getAttribute('data-fmt')==='short'?_sh:_lg});
@@ -1388,10 +1442,10 @@ function render(){
   var _hs='<div><b>'+S.projects.length+'</b>проектов</div><div><b>'+up+'</b>впереди</div><div><b>'+money(got)+'</b>получено</div>';document.querySelectorAll('[data-hs]').forEach(function(e){e.innerHTML=_hs});
   var SV=function(p){return '<svg viewBox="0 0 24 24">'+p+'</svg>'};
   var T=[['cal',SV('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),'Календарь'],['projects',SV('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5 14.6 12M20.5 12 12 14.6M12 20.5 9.4 12M3.5 12 12 9.4"/>'),'Проекты'],['budget',SV('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M15.5 15h2.5"/>'),'Бюджет'],['edits',SV('<path d="M4 7h16M4 12h10M4 17h13"/><circle cx="17" cy="12" r="1.2"/>'),'Монтажи'],['stats',SV('<path d="M5 20v-8M11 20V5M17 20v-5M3 20.5h18"/>'),'Статистика'],['notes',SV('<path d="M6.5 3.5h8l4 4v13h-12z"/><path d="M14.5 3.5v4h4M9.5 12.5h5M9.5 16h5"/>'),'Заметки'],['replies',SV('<path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8 9.5h8M8 12.5h5"/>'),'Ответы']];
-  var MAIN={cal:1,projects:1,budget:1,replies:1},ORD=['cal','projects','budget','replies','edits','stats','notes'];
+  var MAIN={cal:1,projects:1,edits:1,budget:1,replies:1},ORD=['cal','projects','edits','budget','replies','stats','notes'];
   T.sort(function(a,b){return ORD.indexOf(a[0])-ORD.indexOf(b[0])});
   document.getElementById('tabs').innerHTML='<div class="mark">SL<span>ShotList</span></div>'+T.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+(MAIN[t[0]]?'':' sec2')+'" onclick="setTab(\''+t[0]+'\')"><span class="ic">'+t[1]+'</span><span class="lb">'+t[2]+'</span>'+(t[0]==='edits'&&tl>0?'<em class="bd">'+tl+'</em>':'')+'</button>'}).join('')+'<button class="thb'+(showTheme?' on':'')+'" onclick="toggleTheme()"><span class="ic">'+SV('<circle cx="12" cy="12" r="8.5"/><circle cx="8.5" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/><path d="M12 20.5c-1.5 0-2-1.5-1-2.5s.5-3 2-3h3"/>')+'</span><span class="lb">Тема</span></button>'
-   +'<button class="more'+(!MAIN[tab]||showMore?' on':'')+'" onclick="toggleMore()"><span class="ic">'+SV('<circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>')+'</span><span class="lb">Ещё</span>'+(tl>0?'<em class="bd">'+tl+'</em>':'')+'</button>';
+   +'<button class="more'+(!MAIN[tab]||showMore?' on':'')+'" onclick="toggleMore()"><span class="ic">'+SV('<circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>')+'</span><span class="lb">Ещё</span></button>';
   var sh=document.getElementById('sheet');if(!sh){sh=document.createElement('div');sh.id='sheet';document.body.appendChild(sh)}
   sh.className=showMore?'show':'';
   sh.innerHTML='<div class="shb" onclick="toggleMore()"></div><div class="shc"><div class="shg"></div>'+T.filter(function(t){return !MAIN[t[0]]}).map(function(t){return '<button class="shi'+(tab===t[0]?' on':'')+'" onclick="showMore=false;setTab(\''+t[0]+'\')"><span class="ic">'+t[1]+'</span><span>'+t[2]+'</span>'+(t[0]==='edits'&&tl>0?'<em class="bd">'+tl+'</em>':'')+'</button>'}).join('')
@@ -1499,34 +1553,44 @@ function vProjects(){
     +'<div class="g2"><div><label>Монтажей</label><input type="number" id="f_et" value="'+esc(p.editsTotal==null?1:p.editsTotal)+'"></div><div><label>Готово</label><input type="number" id="f_ed" value="'+esc(p.editsDone||0)+'"></div></div>'
     +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea id="f_x" rows="3">'+esc(p.extra)+'</textarea>'
     +'<div class="row"><button class="btn" onclick="saveProject()">Сохранить</button><button class="btn s" onclick="showForm=false;openId=editId;editId=null;render()">Отмена</button></div></div>';
-  } else h+='<button class="btn full" style="margin-bottom:12px" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button>';
-  if(!showForm&&S.projects.length)h+='<input id="f_q" placeholder="Поиск: имя, место, организатор" value="'+esc(fq)+'" oninput="setQ(this.value)"><div class="dq"><input type="date" id="f_dt" value="'+esc(fdt)+'" onchange="fdt=this.value;render()"><span class="dql">'+(fdt?'Съёмки '+fd(fdt):'Поиск по дате')+'</span>'+(fdt?'<button class="btn s" onclick="fdt=\'\';render()">Сбросить</button>':'')+'</div><div class="g2"><select onchange="fs=this.value;render()"><option value="">Все статусы</option>'+STAT.map(function(o){return '<option'+(o===fs?' selected':'')+'>'+o+'</option>'}).join('')+'</select><select onchange="ft=this.value;render()"><option value="">Все типы</option>'+TYPES.map(function(o){return '<option'+(o===ft?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
+  } else h+='<div class="npr"><button class="btn" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button><label class="btn s fpick">Из файла<input type="file" accept=".json,application/json" onchange="importProjInput(this)"></label></div>';
+  if(!showForm&&S.projects.length){
+    h+='<div class="pf"><div class="pfs"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input id="f_q" placeholder="Поиск" value="'+esc(fq)+'" oninput="setQ(this.value)"></div>'
+     +'<label class="pfd'+(fdt?' on':'')+'"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>'+(fdt?fd(fdt).slice(0,5):'Дата')+'</span><input type="date" id="f_dt" value="'+esc(fdt)+'" onchange="fdt=this.value;render()"></label>'
+     +(fdt?'<button class="pfx" onclick="fdt=\'\';render()" aria-label="Сбросить дату">✕</button>':'')+'</div>';
+    h+='<div class="pch">'+['Все'].concat(STAT).map(function(x){var v=x==='Все'?'':x;return '<button class="pc1'+(fs===v?' on':'')+'" onclick="fs=\''+v+'\';render()">'+x+'</button>'}).join('')
+     +'<select class="pc1 sel'+(ft?' on':'')+'" onchange="ft=this.value;render()"><option value="">Все типы</option>'+TYPES.map(function(o){return '<option'+(o===ft?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
+  }
   var q=fq.toLowerCase();
   var L=S.projects.filter(function(p){return (!fdt||p.date===fdt)&&(!fs||(p.status||'Заявка')===fs)&&(!ft||p.type===ft)&&(!q||[p.names,p.place,p.org,p.extra,p.phone,p.tg].join(' ').toLowerCase().indexOf(q)>=0)}).sort(function(a,b){return (a.date||'9').localeCompare(b.date||'9')});
   if(!L.length&&!showForm)h+='<div class="empty">'+(fdt?'На '+fd(fdt)+' проектов нет':S.projects.length?'Ничего не найдено':'Проектов пока нет')+'</div>';
-  else if(!showForm)h+='<div class="mut swhint">← смахни проект влево, чтобы удалить</div>';
+  else if(!showForm&&!S.swHintSeen)h+='<div class="mut swhint">← смахни проект влево, чтобы удалить</div>';
+  var WDs=['вс','пн','вт','ср','чт','пт','сб'],MS3=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],lastM=null;
   L.forEach(function(p){
-    var rest=(+p.amount||0)-(+p.paid||0), nn=S.notes.filter(function(n){return n.date&&n.date===p.date}).length;
-    var pc=p.amount>0?Math.min(100,Math.round(p.paid/p.amount*100)):0;
-    var dn=(p.tasks||[]).filter(function(t){return t.done}).length;
-    h+='<div class="swp" data-id="'+p.id+'"><button class="swdel" onclick="swDel(\''+p.id+'\')" aria-label="Удалить проект"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="card swc'+(p.id===justSaved?' saved':'')+'" onclick="openP(\''+p.id+'\')"><div class="row"><b>'+esc(p.names||'Без названия')+'</b><span class="mut">'+fd(p.date)+'</span></div>'
-    +'<div style="margin:4px 0">'+chipT(p)+' <span class="chip st">'+esc(p.status||'Заявка')+'</span></div>'
-    +'<div class="mut"><span class="k">Место</span>'+esc(p.place||'—')+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
-    +(p.extra?'<div class="mut"><span class="k">Детали</span>'+esc(p.extra)+'</div>':'')
-    +'<div class="row" style="margin-top:6px"><span>'+money(p.amount)+'</span><span class="'+(rest>0?'bad':'ok')+'">'+(rest>0?'остаток '+money(rest):'оплачено')+'</span></div>'
-    +'<div class="bar"><i style="width:'+pc+'%"></i></div>'
-    +'<div class="row mut" style="margin-top:6px"><span>Задачи '+dn+'/'+(p.tasks||[]).length+' · монтажи '+(+p.editsDone||0)+'/'+(+p.editsTotal||0)+(p.deadline?' · сдача '+fd(p.deadline):'')+(nn?' · заметок: '+nn:'')+'</span>'
-    +'<span class="go">›</span></div></div></div>';
+    var mk=p.date?p.date.slice(0,7):'—';
+    if(mk!==lastM){lastM=mk;h+='<div class="pmh">'+(p.date?MN[+mk.slice(5,7)-1]+' <span>'+mk.slice(0,4)+'</span>':'Без даты')+'</div>'}
+    var rest=(+p.amount||0)-(+p.paid||0),pc=p.amount>0?Math.min(100,Math.round(p.paid/p.amount*100)):0;
+    var dd=p.date?p.date.split('-'):null,wd=dd?WDs[new Date(+dd[0],+dd[1]-1,+dd[2]).getDay()]:'',past=p.date&&p.date<today();
+    var et=+p.editsTotal||0,ed=+p.editsDone||0;
+    h+='<div class="swp" data-id="'+p.id+'"><button class="swdel" onclick="swDel(\''+p.id+'\')" aria-label="Удалить проект"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>'
+     +'<div class="card swc pcard'+(p.id===justSaved?' saved':'')+(past?' past':'')+'" style="--c:'+tc(p.type)+'" onclick="openP(\''+p.id+'\')">'
+     +'<div class="pdt">'+(dd?'<b>'+(+dd[2])+'</b><span>'+wd+'</span>':'<b>—</b>')+'</div>'
+     +'<div class="pmain"><div class="pnm">'+esc(p.names||'Без названия')+'</div>'
+     +'<div class="pmeta"><i></i>'+esc(p.type||'Съёмка')+(p.place?' · '+esc(p.place):'')+'</div>'
+     +'<div class="ptags"><span class="pst">'+esc(p.status||'Заявка')+'</span>'+(et?'<span class="ped'+(ed>=et?' done':'')+'">монтаж '+ed+'/'+et+'</span>':'')+(p.deadline&&ed<et&&p.status!=='Сдан'?'<span class="ped'+(dleft(p.deadline)<0?' late':'')+'">сдача '+fd(p.deadline).slice(0,5)+'</span>':'')+'</div></div>'
+     +'<div class="psum"><b>'+money(p.amount)+'</b><span class="'+(rest>0?'bad':'ok')+'">'+(rest>0?'−'+money(rest):'✓ оплачено')+'</span></div>'
+     +'<div class="pbar"><i style="width:'+pc+'%"></i></div></div></div>';
   });
   return h;
 }
-function openP(id){tab='projects';showForm=false;editId=null;openId=id;gearEdit=false;render();window.scrollTo(0,0)}
+function openP(id){shareOpen=false;tab='projects';showForm=false;editId=null;openId=id;gearEdit=false;render();window.scrollTo(0,0)}
 function P(id){return S.projects.find(function(x){return x.id===id})}
 function digits(s){return String(s||'').replace(/[^0-9]/g,'')}
 function vDetail(p){
   var r=(+p.amount||0)-(+p.paid||0),pc=p.amount>0?Math.min(100,Math.round(p.paid/p.amount*100)):0;
   var td=(p.tasks||[]).filter(function(t){return t.done}).length,gd=S.gear.filter(function(g){return p.gearDone[g]}).length;
-  var h='<div class="row" style="margin-bottom:10px"><button class="btn s" onclick="openId=null;render()">‹ Все проекты</button><button class="btn s" onclick="editP(\''+p.id+'\')">Изменить</button></div>';
+  var h='<div class="row" style="margin-bottom:10px"><button class="btn s" onclick="openId=null;shareOpen=false;render()">‹ Все проекты</button><span><button class="btn s'+(shareOpen?' on':'')+'" onclick="shareOpen=!shareOpen;render()">Поделиться</button> <button class="btn s" onclick="editP(\''+p.id+'\')">Изменить</button></span></div>';
+  if(shareOpen)h+=sharePanel(p);
   var late=p.deadline&&p.status!=='Сдан'&&dleft(p.deadline)<0;
   h+='<div class="card"><div class="row"><b>'+esc(p.names||'Без названия')+'</b><span class="mut">'+fd(p.date)+'</span></div>'
    +'<div style="margin:6px 0 8px">'+chipT(p)+' <span class="chip st">'+esc(p.status||'Заявка')+'</span></div>'
@@ -1649,7 +1713,7 @@ function bindSwipe(){
       if(lock===null&&(Math.abs(mx)>8||Math.abs(my)>8))lock=Math.abs(mx)>Math.abs(my)?'x':'y';
       if(lock!=='x')return;moved=true;closeSw(w);dx=Math.max(-110,Math.min(0,base+mx));c.style.transform='translateX('+dx+'px)';w.querySelector('.swdel').style.opacity=Math.min(1,-dx/70)});
     function end(){if(!drag)return;drag=false;c.style.transition='';var d=w.querySelector('.swdel');d.style.opacity='';
-      if(lock==='x'){if(dx<-40){w.classList.add('open');c.style.transform='translateX(-84px)'}else{w.classList.remove('open');c.style.transform=''}}}
+      if(lock==='x'){if(dx<-40){if(!S.swHintSeen){S.swHintSeen=true;save()}w.classList.add('open');c.style.transform='translateX(-84px)'}else{w.classList.remove('open');c.style.transform=''}}}
     c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
     c.addEventListener('click',function(e){if(moved){e.stopPropagation();e.preventDefault();moved=false}else if(w.classList.contains('open')){e.stopPropagation();e.preventDefault();closeSw(null)}},true);
   });
@@ -1776,6 +1840,56 @@ function ipCard(){var c=ipYear(),t=S.tax;
   return h}
 function aggPaid(){var tx=0,ak=0;S.projects.forEach(function(p){var c=calcP(p,+p.paid||0);tx+=c.tax;ak+=c.ak});return {tax:tx,ak:ak}}
 
+/* поделиться проектом с подрядчиком */
+var shareOpen=false,shOpt={tm:true,qz:true,tk:true,gr:false,nt:true,fin:false};
+function sharePanel(p){
+  var o=function(k,t,sub){return '<label class="tgl shk"><input type="checkbox"'+(shOpt[k]?' checked':'')+' onchange="shOpt.'+k+'=this.checked"><span>'+t+(sub?'<small>'+sub+'</small>':'')+'</span></label>'};
+  return '<div class="card shp"><div class="sec">Поделиться проектом<small>подрядчику</small></div>'
+   +'<div class="mut" style="margin-bottom:8px">Всегда передаются: дата, место, тип съёмки, организаторы, контакты, дедлайн и детали. Отметь, что добавить:</div>'
+   +o('tm','Тайминг дня')+o('qz','Анкета пары')+o('tk','Задачи')+o('gr','Отметки техники')+o('nt','Заметки на дату съёмки')
+   +o('fin','Финансы','сумма, оплаты, налог и АК. По умолчанию скрыты')
+   +'<div class="ract"><button class="btn" onclick="shareProjFile(\''+p.id+'\')">Отправить файлом</button><button class="btn s" onclick="shareProjText(\''+p.id+'\')">Отправить текстом</button></div>'
+   +'<div class="mut" style="margin-top:8px">Файл подрядчик откроет в своём ShotList: «Проекты» → «Из файла». Если отправишь этот проект ещё раз, у него он обновится, а не продублируется. Текст подойдёт тем, у кого нет приложения.</div></div>'}
+function projPack(p){
+  var c=JSON.parse(JSON.stringify(p)),keep=['names','date','place','org','type','status','warn','deadline','dwarn','phone','tg','extra','editsTotal','editsDone','pack'];
+  var out={};keep.forEach(function(k){if(c[k]!=null)out[k]=c[k]});
+  if(shOpt.tm)out.timing=c.timing||[];if(shOpt.qz)out.quiz=c.quiz||{};if(shOpt.tk)out.tasks=c.tasks||[];if(shOpt.gr)out.gearDone=c.gearDone||{};
+  if(shOpt.fin){['amount','payments','client','taxOn','ak'].forEach(function(k){if(c[k]!=null)out[k]=c[k]})}
+  out.srcId=p.srcId||p.id;
+  var notes=shOpt.nt&&p.date?S.notes.filter(function(n){return n.date===p.date}).map(function(n){return {date:n.date,text:n.text}}):[];
+  return {app:'ShotList',kind:'project',v:1,sent:new Date().toISOString(),fin:!!shOpt.fin,p:out,notes:notes}}
+function shareFileObj(file,title){
+  var mobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
+  if(mobile&&navigator.canShare&&navigator.canShare({files:[file]})){return navigator.share({files:[file],title:title}).then(function(){return true}).catch(function(){return false})}
+  var u=URL.createObjectURL(file),a=document.createElement('a');a.href=u;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},60000);return Promise.resolve(true)}
+function shareProjFile(id){var p=P(id),pk=projPack(p),d=p.date||today();
+  var file=new File([JSON.stringify(pk)],'ShotList-project-'+d+'.json',{type:'application/json'});
+  shareFileObj(file,'Проект ShotList: '+(p.names||'')).then(function(ok){if(ok)toast('Проект подготовлен к отправке','Ок',hideToast)})}
+function shareProjText(id){var p=P(id),L=[];
+  L.push('🎬 '+(p.type||'Съёмка')+': '+(p.names||'Проект'));
+  if(p.date)L.push('📅 '+fd(p.date)+(WD?' ('+WD[new Date(p.date+'T12:00').getDay()].toLowerCase()+')':''));
+  if(p.place)L.push('📍 '+p.place);
+  if(p.org)L.push('👥 Организаторы: '+p.org);
+  if(p.phone||p.tg)L.push('📞 Контакт клиента: '+[p.phone,p.tg].filter(Boolean).join(', '));
+  if(p.deadline)L.push('⏳ Сдача монтажа: '+fd(p.deadline));
+  if(shOpt.tm&&(p.timing||[]).length){L.push('','Тайминг:');p.timing.slice().sort(function(a,b){return (a.t||'').localeCompare(b.t||'')}).forEach(function(x){L.push((x.t||'—')+'  '+x.n)})}
+  if(shOpt.qz){var qa=S.quizQ.filter(function(q){return ((p.quiz||{})[q]||'').trim()});if(qa.length){L.push('','О паре:');qa.forEach(function(q){L.push('— '+q+'\n  '+p.quiz[q].trim())})}}
+  if(shOpt.tk&&(p.tasks||[]).length){L.push('','Задачи:');p.tasks.forEach(function(t){L.push((t.done?'✓ ':'• ')+t.t)})}
+  if(shOpt.nt&&p.date){var ns=S.notes.filter(function(n){return n.date===p.date});if(ns.length){L.push('','Заметки:');ns.forEach(function(n){L.push('• '+n.text)})}}
+  if(p.extra)L.push('','Детали: '+p.extra);
+  if(shOpt.fin)L.push('','💰 Бюджет: '+money(p.amount)+', оплачено '+money(p.paid));
+  shareText(L.join('\n'))}
+function importProjectPack(d){
+  var src=d.p||{},ex=S.projects.find(function(x){return (x.srcId&&x.srcId===src.srcId)||x.id===src.srcId}),wasNew=!ex;
+  if(ex){var keepFin=!d.fin?{amount:ex.amount,payments:ex.payments,client:ex.client,taxOn:ex.taxOn,ak:ex.ak}:{};Object.assign(ex,src,keepFin)}
+  else{var n=Object.assign({amount:0,payments:[]},src);n.id=uid();S.projects.push(n);ex=n}
+  (d.notes||[]).forEach(function(nn){if(!S.notes.some(function(m){return m.date===nn.date&&m.text===nn.text}))S.notes.push({id:uid(),date:nn.date,text:nn.text})});
+  migrate();syncPaid(ex);save();tab='projects';showForm=false;openId=null;justSaved=ex.id;showData=false;render();
+  toast((wasNew?'Проект получен: ':'Проект обновлён: ')+(ex.names||''),'Открыть',function(){hideToast();openP(ex.id)});
+  setTimeout(function(){justSaved=null;render()},2600)}
+function importProjInput(inp){var f=inp.files&&inp.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var d=JSON.parse(r.result);if(d&&d.kind==='project'&&d.p)importProjectPack(d);else toast('Это не файл проекта ShotList','Ок',hideToast)}catch(e){toast('Не удалось прочитать файл','Ок',hideToast)}inp.value=''};r.readAsText(f)}
+
 function saveProject(){
   var o={names:v('f_n'),date:v('f_d'),place:v('f_pl'),org:v('f_o'),type:v('f_t'),status:v('f_s'),warn:+v('f_w'),deadline:v('f_dd'),dwarn:+v('f_dw'),phone:v('f_ph').trim(),tg:v('f_tg').trim(),extra:v('f_x'),client:v('f_cl'),taxOn:document.getElementById('f_tx').checked,ak:document.getElementById('f_ak').checked,amount:+v('f_a')||0,editsTotal:+v('f_et')||0,editsDone:+v('f_ed')||0};
   var pkEl=document.getElementById('f_pk');if(pkEl){o.packId=pkEl.value;var pkO=S.packs.find(function(k){return k.id===pkEl.value});o.pack=pkO?pkO.name:''}
@@ -1818,7 +1932,7 @@ function exportFile(){
   })}
 var preImport=null;
 function importFile(inp){var f=inp.files&&inp.files[0];if(!f)return;var r=new FileReader();
-  r.onload=function(){try{var d=JSON.parse(r.result),data=d&&d.app==='ShotList'&&d.S?d.S:d;if(!data||!Array.isArray(data.projects))throw 0;applyImport(data,d.files||null)}catch(e){dmsg='Это не файл копии ShotList';render()}};
+  r.onload=function(){try{var d=JSON.parse(r.result);if(d&&d.kind==='project'&&d.p){importProjectPack(d);return}var data=d&&d.app==='ShotList'&&d.S?d.S:d;if(!data||!Array.isArray(data.projects))throw 0;applyImport(data,d.files||null)}catch(e){dmsg='Это не файл копии ShotList';render()}};
   r.readAsText(f)}
 function applyImport(data,files){
   preImport=JSON.stringify(S);
@@ -1918,6 +2032,10 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persisted(
   var d=JSON.parse(t);
   if(!hadLocal&&d&&Array.isArray(d.projects)&&d.projects.length){S=Object.assign({projects:[],expenses:[],notes:[],cur:'₽'},d);migrate();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast('Данные восстановлены из запасной копии','Ок',hideToast)}
   else if(S.projects.length)save()}).catch(function(){})}catch(e){}})();
+/* запрет масштабирования жестами и двойным касанием (iOS) */
+['gesturestart','gesturechange','gestureend'].forEach(function(ev){document.addEventListener(ev,function(e){e.preventDefault()},{passive:false})});
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
 </script>
 </body>
