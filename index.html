@@ -31,7 +31,7 @@ html,body{overscroll-behavior-x:none}
 @keyframes slR{from{opacity:.3;transform:translateX(-28px)}to{opacity:1;transform:none}}
 #view.slL{animation:slL .22s ease-out}#view.slR{animation:slR .22s ease-out}
 
-.svg{grid-template-areas:"a a s1 s2" "a a l1 l2" "p p q q"!important}
+.svg{grid-template-areas:"a a s1 s2" "a a l1 l2" "p p q q" "r r r r"!important}
 .svt.pill{border-radius:24px;padding:12px 14px}
 .svt.pill .svx b{font-size:15px}
 .bkb{margin:0 0 6px}
@@ -288,6 +288,42 @@ button,a,label,.swc,.day{touch-action:manipulation;-webkit-tap-highlight-color:t
 .seg.csw .btn.s.tdb{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding-left:12px;padding-right:12px}
 .seg.csw .btn.s.tdb svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .seg.csw .btn.s.tdb.hl{background:var(--pri);color:var(--priTx);border-color:var(--pri)}
+
+/* обучение */
+#tour{position:fixed;inset:0;z-index:250;display:none}
+#tour.show{display:block}
+#tour .tp{position:absolute;display:block;background:rgba(10,10,10,.42);backdrop-filter:blur(6px) saturate(.9);-webkit-backdrop-filter:blur(6px) saturate(.9)}
+#tour .tring{position:absolute;display:block;border-radius:18px;box-shadow:0 0 0 2px var(--ac,#fff),0 0 0 7px rgba(255,255,255,.14),0 0 30px rgba(255,255,255,.18);pointer-events:none;animation:tpls 1.8s ease-in-out infinite}
+@keyframes tpls{50%{box-shadow:0 0 0 2px var(--ac,#fff),0 0 0 11px rgba(255,255,255,.06),0 0 30px rgba(255,255,255,.12)}}
+.tcard{position:absolute;padding:16px 16px 12px;border-radius:20px;background:var(--bg);color:var(--tx);box-shadow:0 18px 50px rgba(0,0,0,.45);border:1px solid var(--hair,var(--line));text-transform:none;letter-spacing:0}
+.tcard.mid{left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,calc(100vw - 32px));text-align:center}
+.tcard.down:before,.tcard.up:after{content:"";position:absolute;left:calc(var(--ax) - 8px);width:16px;height:16px;background:var(--bg);transform:rotate(45deg);border:1px solid var(--hair,var(--line))}
+.tcard.down:before{top:-8px;border-right:0;border-bottom:0}
+.tcard.up:after{bottom:-8px;border-left:0;border-top:0}
+.tlogo{font-size:34px;font-weight:800;letter-spacing:-.04em;color:var(--ac,var(--tx));margin-bottom:6px}
+.tt{font-size:17px;font-weight:800;line-height:1.2;font-family:'Manrope',sans-serif}
+.tx{font-size:14px;line-height:1.45;color:var(--mut);margin-top:6px;font-family:'Manrope',sans-serif}
+.tdots{display:flex;gap:5px;margin-top:12px}.tcard.mid .tdots{justify-content:center}
+.tdots b{width:6px;height:6px;border-radius:3px;background:var(--hair,var(--line));transition:width .2s}
+.tdots b.on{width:18px;background:var(--ac,var(--tx))}
+.tbtn{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px}
+.tcard.mid .tbtn{justify-content:center}
+.tbk{display:flex;gap:6px}
+.tsk,.tnx{border:0;border-radius:99px;padding:10px 16px;font:600 14px/1 'Manrope',sans-serif;cursor:pointer;letter-spacing:0;text-transform:none}
+.tsk{background:transparent;color:var(--mut)}
+.tnx{background:var(--pri);color:var(--priTx)}
+.tsw{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 10px;color:var(--ac,var(--tx));font-size:22px}
+.tsw i{width:46px;height:46px;border-radius:50%;background:var(--soft,rgba(255,255,255,.1));box-shadow:inset 0 0 0 2px var(--ac,var(--tx));animation:tswp 1.6s ease-in-out infinite}
+@keyframes tswp{0%,100%{transform:translateX(-14px)}50%{transform:translateX(14px)}}
+html.touring body{overflow:hidden}
+.svt.pill.wide{min-height:58px}
+
+.imc{text-align:center}
+.imc .tlogo{margin-bottom:2px}
+.imp{margin:12px 0 4px;padding:12px;border-radius:14px;background:var(--soft,rgba(255,255,255,.06));border:1px solid var(--hair,var(--line));text-align:left}
+.imp .pnm{font-size:16px}
+#pwm textarea{margin-top:10px}
+.npr .btn.s{flex:0 0 auto;padding-left:12px!important;padding-right:12px!important}
 </style>
 <style data-th="snova" media="all">
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#0D0F0C;--card:rgba(12,13,11,.66);--tx:#EDE6DA;--mut:rgba(237,230,218,.55);--line:rgba(255,91,31,.38);--hair:rgba(237,230,218,.12);--red:#FF5B1F;--ac:#FF5B1F;--gold:#FF5B1F;--soft:rgba(255,91,31,.09);--pri:#FF5B1F;--priTx:#120A06;--navOn:rgba(255,91,31,.1);--navOnTx:#FF5B1F;--ok:#B9C79A;--bad:#FF7A4D;--hero:transparent;--heroTx:#FF5B1F}
@@ -1656,7 +1692,7 @@ function vProjects(){
     +'<div class="g2"><div><label>Монтажей</label><input type="number" id="f_et" value="'+esc(p.editsTotal==null?1:p.editsTotal)+'"></div><div><label>Готово</label><input type="number" id="f_ed" value="'+esc(p.editsDone||0)+'"></div></div>'
     +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea id="f_x" rows="3">'+esc(p.extra)+'</textarea>'
     +'<div class="row"><button class="btn" onclick="saveProject()">Сохранить</button><button class="btn s" onclick="showForm=false;openId=editId;editId=null;render()">Отмена</button></div></div>';
-  } else h+='<div class="npr"><button class="btn" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button><label class="btn s fpick">Из файла<input type="file" accept=".json,application/json" onchange="importProjInput(this)"></label></div>';
+  } else h+='<div class="npr"><button class="btn" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button><button class="btn s" onclick="pasteProject()">Вставить</button><label class="btn s fpick">Файл<input type="file" accept=".json,application/json" onchange="importProjInput(this)"></label></div>';
   if(!showForm&&S.projects.length){
     h+='<div class="pf"><div class="pfs"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input id="f_q" placeholder="Поиск" value="'+esc(fq)+'" oninput="setQ(this.value)"></div>'
      +'<label class="pfd'+(fdt?' on':'')+'"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>'+(fdt?fd(fdt).slice(0,5):'Дата')+'</span><input type="date" id="f_dt" value="'+esc(fdt)+'" onchange="fdt=this.value;render()"></label>'
@@ -1972,8 +2008,9 @@ function sharePanel(p){
    +o('tm','Тайминг дня')+o('qz','Анкета пары')+o('tk','Задачи')+o('gr','Отметки техники')+o('nt','Заметки на дату съёмки')
    +o('fin','Финансы','сумма, оплаты, налог и АК. По умолчанию скрыты')
    +o('pw','Защитить файл паролем','пароль сообщи подрядчику отдельно, не в том же чате')
-   +'<div class="ract"><button class="btn" onclick="shareProjFile(\''+p.id+'\')">Отправить файлом</button><button class="btn s" onclick="shareProjText(\''+p.id+'\')">Отправить текстом</button></div>'
-   +'<div class="mut" style="margin-top:8px">Файл подрядчик откроет в своём ShotList: «Проекты» → «Из файла». Если отправишь этот проект ещё раз, у него он обновится, а не продублируется. Текст подойдёт тем, у кого нет приложения.</div></div>'}
+   +'<button class="btn full" style="margin-top:6px" onclick="shareProjLink(\''+p.id+'\')">Отправить ссылкой</button>'
+   +'<div class="ract"><button class="btn s" onclick="shareProjFile(\''+p.id+'\')">Файлом</button><button class="btn s" onclick="shareProjText(\''+p.id+'\')">Текстом</button></div>'
+   +'<div class="mut" style="margin-top:8px">Ссылка — самый простой способ: подрядчик нажмёт на неё и добавит проект в свой ShotList. Файл открывается через «Проекты» → «Из файла». Если отправишь этот проект ещё раз, у него он обновится, а не продублируется. Текст подойдёт тем, у кого нет приложения.</div></div>'}
 function projPack(p){
   var c=JSON.parse(JSON.stringify(p)),keep=['names','date','place','org','type','status','warn','deadline','dwarn','phone','tg','extra','editsTotal','editsDone','pack'];
   var out={};keep.forEach(function(k){if(c[k]!=null)out[k]=c[k]});
@@ -2117,6 +2154,7 @@ function vServices(){
    +tile('s1','sm','setTab(\'notes\')',ico('notes'))+tile('s2','sm','setTab(\'theme\')',ico('theme'))
    +'<span class="svl" style="grid-area:l1">Заметки'+(nn?' · '+nn:'')+'</span><span class="svl" style="grid-area:l2">Тема</span>'
    +tile('p','pill','setTab(\'backup\')','<div class="svx"><b>Копия</b><span>'+(days<0?'ещё не было':days===0?'сегодня':days+' дн. назад')+'</span></div>'+ico('backup'))
+   +tile('r','pill wide','startTour(true)','<div class="svx"><b>Обучение</b><span>Как пользоваться ShotList · 1 минута</span></div>'+ico('quiz'))
    +tile('q','pill','setTab(\'security\')','<div class="svx"><b>Код-пароль</b><span>'+(pin?'включён':'выключен')+'</span></div>'+ico('lock'))
    +'</div><div class="fnote">ShotList · версия '+APPV+'</div>'}
 function vTheme(){return backBtn()+'<div class="svh">Тема</div><div class="card">'+themePanel().replace(/^<div class="card"><div class="row">.*?<\/div>/,'<div>')+'</div>'}
@@ -2284,6 +2322,105 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persisted(
   if(!hadLocal&&d&&Array.isArray(d.projects)&&d.projects.length){S=Object.assign({projects:[],expenses:[],notes:[],cur:'₽'},d);migrate();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast('Данные восстановлены из запасной копии','Ок',hideToast)}
   else if(S.projects.length)save()}).catch(function(){})}catch(e){}})();
 lockScreen();
+
+/* ===== обучающие подсказки ===== */
+var TOURK='shotlist_tour_done',tourI=-1,tourSteps=null;
+function tabBtn(t){var L=document.querySelectorAll('.tabs button');for(var i=0;i<L.length;i++){var b=L[i],oc=b.getAttribute('onclick')||'';if(oc.indexOf("'"+t+"'")>-1&&b.offsetParent!==null&&b.getBoundingClientRect().width>0)return b}return null}
+function visEl(sel){if(typeof sel==='function')return sel();var L=document.querySelectorAll(sel);for(var i=0;i<L.length;i++){var r=L[i].getBoundingClientRect();if(r.width>0&&r.height>0)return L[i]}return null}
+function TSTEPS(){return [
+ {t:'Добро пожаловать в ShotList',x:'Короткая экскурсия по главному займёт минуту. Можно пропустить и пройти её позже в «Сервисах».',first:true},
+ {tab:'cal',el:function(){return tabBtn('cal')},t:'Календарь',x:'Главная страница: съёмки по дням, ближайшие проекты, заметки и тайминг дня съёмки.'},
+ {tab:'cal',el:'.hero .hs',t:'Сводка',x:'Сколько проектов всего, сколько завершено, сколько впереди и на какую сумму.'},
+ {tab:'cal',el:'.tdb',t:'Кнопка «Сегодня»',x:'Пролистала месяцы вперёд? Одно касание вернёт к сегодняшнему дню.'},
+ {tab:'cal',el:'.cal',t:'Дни съёмок',x:'Точка под датой — съёмка, цвет показывает её тип. Кольцо — сдача монтажа. Нажми на день, чтобы увидеть его проекты.'},
+ {tab:'projects',el:'.npr .btn',t:'Новый проект',x:'Имена пары, дата, место, тип съёмки и сумма. Задачи по типу съёмки создадутся сами.'},
+ {tab:'projects',el:'.pseg',t:'Будущие и завершённые',x:'Проекты разделены: впереди и уже прошедшие или сданные.'},
+ {tab:'projects',el:'.pcard',t:'Карточка проекта',x:'Нажми, чтобы открыть: тайминг, анкета пары, оплаты, расходы, задачи и техника. Смахни влево, чтобы удалить.'},
+ {tab:'edits',el:function(){return tabBtn('edits')},t:'Монтажи',x:'Сколько монтажей готово и сколько осталось, с дедлайнами сдачи.'},
+ {tab:'budget',el:function(){return tabBtn('budget')},t:'Бюджет',x:'Доходы и расходы, налог, агентская комиссия и твой прайс-лист.'},
+ {tab:'replies',el:function(){return tabBtn('replies')},t:'Быстрые ответы',x:'Готовые сообщения клиентам: имена, даты и суммы подставляются сами. Можно прикрепить договор.'},
+ {tab:'services',el:function(){return tabBtn('services')},t:'Сервисы',x:'Статистика, заметки, темы оформления, резервная копия и код-пароль.'},
+ {tab:'services',el:'.svt.pill',t:'Резервная копия',x:'Данные хранятся только на этом устройстве. Сохраняй копию в файл раз в неделю.'},
+ {swipe:true,t:'Свайпы',x:'Листай вкладки свайпом влево и вправо по экрану, как в обычных приложениях.'},
+ {t:'Готово!',x:'Удачных съёмок 🎬 Обучение всегда можно пройти снова: «Сервисы» → «Обучение».',last:true}
+]}
+function startTour(manual){tourSteps=TSTEPS();tourI=0;var T=document.getElementById('tour');if(!T){T=document.createElement('div');T.id='tour';document.body.appendChild(T)}
+  T.className='show';document.documentElement.classList.add('touring');showStep()}
+function endTour(){try{localStorage.setItem(TOURK,'1')}catch(e){}var T=document.getElementById('tour');if(T){T.className='';T.innerHTML=''}document.documentElement.classList.remove('touring');tourI=-1;setTab('cal')}
+function tourGo(d){tourI+=d;if(tourI<0)tourI=0;if(tourI>=tourSteps.length){endTour();return}showStep(d)}
+function showStep(dir){var st=tourSteps[tourI],T=document.getElementById('tour');if(!T)return;
+  if(st.tab&&tab!==st.tab){openId=null;showForm=false;setTab(st.tab)}
+  var el=st.el?visEl(st.el):null;
+  if(st.el&&!el){tourGo(dir||1);return}
+  if(el){var r0=el.getBoundingClientRect();if(r0.top<70||r0.bottom>window.innerHeight-110)el.scrollIntoView({block:'center'})}
+  setTimeout(function(){drawStep(st,el)},el?220:0)}
+function drawStep(st,el){var T=document.getElementById('tour');if(!T||tourI<0)return;
+  var W=window.innerWidth,H=window.innerHeight,n=tourSteps.length,pad=8,r=null;
+  if(el){var b=el.getBoundingClientRect();r={x:Math.max(4,b.left-pad),y:Math.max(4,b.top-pad),w:Math.min(W-8,b.width+pad*2),h:b.height+pad*2}}
+  var panes='';
+  if(r){panes='<i class="tp" style="left:0;top:0;width:100%;height:'+r.y+'px"></i><i class="tp" style="left:0;top:'+(r.y+r.h)+'px;width:100%;bottom:0"></i><i class="tp" style="left:0;top:'+r.y+'px;width:'+r.x+'px;height:'+r.h+'px"></i><i class="tp" style="left:'+(r.x+r.w)+'px;top:'+r.y+'px;right:0;height:'+r.h+'px"></i><i class="tring" style="left:'+r.x+'px;top:'+r.y+'px;width:'+r.w+'px;height:'+r.h+'px"></i>'}
+  else panes='<i class="tp" style="inset:0"></i>';
+  var dots='';for(var i=1;i<n-1;i++)dots+='<b class="'+(i===tourI?'on':'')+'"></b>';
+  var btns=st.first?'<button class="tsk" onclick="endTour()">Пропустить</button><button class="tnx" onclick="tourGo(1)">Начать</button>'
+    :st.last?'<button class="tsk" onclick="tourGo(-1)">Назад</button><button class="tnx" onclick="endTour()">Завершить</button>'
+    :'<button class="tsk" onclick="endTour()">Пропустить</button><span class="tbk"><button class="tsk" onclick="tourGo(-1)">‹</button><button class="tnx" onclick="tourGo(1)">Далее</button></span>';
+  var card='<div class="tcard'+(r?'':' mid')+'" id="tcard">'+(st.swipe?'<div class="tsw"><span>←</span><i></i><span>→</span></div>':'')+(st.first||st.last?'<div class="tlogo">SL</div>':'')
+   +'<div class="tt">'+esc(st.t)+'</div><div class="tx">'+esc(st.x)+'</div>'+(st.first||st.last?'':'<div class="tdots">'+dots+'</div>')+'<div class="tbtn">'+btns+'</div></div>';
+  T.innerHTML=panes+card;
+  var c=document.getElementById('tcard');
+  if(r){var ch=c.offsetHeight,cw=Math.min(W-24,340),below=r.y+r.h+12,above=r.y-12-ch;
+    var top=(below+ch<H-12)?below:(above>12?above:Math.max(12,H-ch-12));
+    var left=Math.min(Math.max(12,r.x+r.w/2-cw/2),W-cw-12);
+    c.style.width=cw+'px';c.style.left=left+'px';c.style.top=top+'px';
+    var ax=Math.min(Math.max(18,r.x+r.w/2-left),cw-18);c.style.setProperty('--ax',ax+'px');c.classList.add(top>=below?'down':'up')}}
+window.addEventListener('resize',function(){if(tourI>=0)showStep(0)});
+function maybeTour(){var done=false;try{done=!!localStorage.getItem(TOURK)}catch(e){}if(done||S.projects.length)return;
+  var wait=function(){if(document.querySelector('#lock.show')){setTimeout(wait,600);return}startTour(false)};setTimeout(wait,700)}
+/* ===== передача проекта ссылкой ===== */
+var DEF_APP_URL='https://89106482555a-dot.github.io/shortlist/';
+function appUrl(){try{if(/^https:$/.test(location.protocol)&&/github\.io$/.test(location.hostname))return location.origin+location.pathname}catch(e){}return DEF_APP_URL}
+function b64uE(u8){return u8b64(u8).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function b64uD(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return b64u8(s)}
+function zipStr(str){var u=new TextEncoder().encode(str);if(typeof CompressionStream==='undefined')return Promise.resolve('j'+b64uE(u));
+  return new Response(new Blob([u]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer().then(function(b){return 'z'+b64uE(new Uint8Array(b))})}
+function unzipStr(p){var k=p[0],u=b64uD(p.slice(1));if(k==='j')return Promise.resolve(new TextDecoder().decode(u));
+  return new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()}
+function shareProjLink(id){var p=P(id),pk=JSON.stringify(projPack(p));
+  var go=function(pw){(pw?encObj(pk,pw):Promise.resolve(pk)).then(function(str){return zipStr(str)}).then(function(z){
+    var url=appUrl()+'#'+(pw?'pe':'p')+'='+z,txt='Проект в ShotList: '+(p.names||'')+(p.date?' · '+fd(p.date):'')+(pw?' (пароль сообщу отдельно)':'');
+    if(url.length>15000)toast('Проект большой. Лучше отправить файлом','Ок',hideToast);
+    if(navigator.share){navigator.share({title:'Проект ShotList',text:txt,url:url}).catch(function(e){if(e&&e.name==='NotAllowedError')copyText(txt+'\n'+url).then(function(){toast('Ссылка скопирована','Ок',hideToast)})})}
+    else copyText(txt+'\n'+url).then(function(){toast('Ссылка скопирована. Отправь её подрядчику','Ок',hideToast)})})};
+  if(shOpt.pw)askPw({title:'Пароль на ссылку',confirm:true,hint:'Подрядчик введёт его при открытии ссылки. Пароль сообщи отдельно.'},go);else go(null)}
+function isIOS(){return /iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+function isStandalone(){try{return navigator.standalone===true||matchMedia('(display-mode: standalone)').matches}catch(e){return false}}
+function parseShared(str,cb){var m=String(str||'').match(/#(pe?)=([A-Za-z0-9_\-]+)/);
+  if(m){unzipStr(m[2]).then(function(t){var d=JSON.parse(t);withDecrypt(d,cb)}).catch(function(){toast('Ссылка повреждена или неполная','Ок',hideToast)});return true}
+  try{var d=JSON.parse(str);if(d&&(d.kind==='project'||d.enc)){withDecrypt(d,cb);return true}}catch(e){}return false}
+function impModal(d,raw){var x=d.p||{},m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
+  var iosWeb=isIOS()&&!isStandalone();
+  m.innerHTML='<div class="pwb"></div><div class="pwc card imc"><div class="tlogo">SL</div><b>Тебе прислали проект</b>'
+   +'<div class="imp"><div class="pnm">'+esc(x.names||'Проект')+'</div><div class="mut">'+[x.date?fd(x.date):'',x.type||'',x.place||''].filter(Boolean).map(esc).join(' · ')+'</div>'
+   +'<div class="mut" style="margin-top:4px">'+[(x.timing||[]).length?'тайминг':'',x.quiz&&Object.keys(x.quiz).length?'анкета':'',(x.tasks||[]).length?'задачи':'',d.fin?'финансы':''].filter(Boolean).join(', ')+'</div></div>'
+   +(iosWeb?'<div class="mut" style="margin:10px 0">Ссылка открылась в Safari. Нажми кнопку, затем открой ShotList с экрана «Домой» → «Проекты» → «Вставить».</div><button class="btn full" id="imgo">Скопировать для ShotList</button><button class="btn s full" style="margin-top:8px" id="imhere">Добавить здесь, в Safari</button>'
+          :'<button class="btn full" style="margin-top:12px" id="imgo">Добавить в ShotList</button>')
+   +'<button class="lkf" id="imx">Отмена</button></div>';
+  m.className='show';var close=function(){m.className='';m.innerHTML=''};
+  document.getElementById('imx').onclick=close;m.querySelector('.pwb').onclick=close;
+  document.getElementById('imgo').onclick=function(){if(iosWeb){copyText('ShotList-проект '+raw).then(function(){close();toast('Скопировано. Открой ShotList → «Проекты» → «Вставить»','Ок',hideToast)})}else{close();importProjectPack(d)}};
+  var hr=document.getElementById('imhere');if(hr)hr.onclick=function(){close();importProjectPack(d)}}
+function checkHashImport(){var h=location.hash||'';if(!/#pe?=/.test(h))return false;var raw=location.href;
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  var wait=function(){if(document.querySelector('#lock.show')){setTimeout(wait,500);return}parseShared(raw,function(d){if(d&&d.kind==='project'&&d.p)impModal(d,raw);else toast('Это не проект ShotList','Ок',hideToast)})};setTimeout(wait,300);return true}
+function pasteProject(){
+  var handle=function(t){if(!parseShared(t,function(d){if(d&&d.kind==='project'&&d.p)impModal(d,t);else toast('Это не проект ShotList','Ок',hideToast)}))toast('В буфере нет проекта ShotList. Скопируй ссылку на проект и нажми ещё раз','Ок',hideToast)};
+  var manual=function(){var m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
+    m.innerHTML='<div class="pwb"></div><div class="pwc card"><b>Вставь ссылку на проект</b><textarea id="pst" rows="4" placeholder="Нажми и удерживай → «Вставить»"></textarea><div class="ract"><button class="btn s" id="pwx">Отмена</button><button class="btn" id="pwo">Добавить</button></div></div>';
+    m.className='show';var close=function(){m.className='';m.innerHTML=''};document.getElementById('pwx').onclick=close;m.querySelector('.pwb').onclick=close;
+    document.getElementById('pwo').onclick=function(){var t=document.getElementById('pst').value;close();handle(t)};setTimeout(function(){document.getElementById('pst').focus()},50)};
+  try{if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){if(t&&t.trim())handle(t);else manual()}).catch(manual);return}}catch(e){}
+  manual()}
+if(!checkHashImport())maybeTour();
 /* свайп между вкладками (телефон) */
 (function(){var TORD=['cal','projects','edits','budget','replies','services'],SUB={stats:1,notes:1,theme:1,backup:1,security:1,settings:1};
   var x0=0,y0=0,t0=0,ok=false,onSwp=false;
