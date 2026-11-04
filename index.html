@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+.shv{text-align:center;font-size:11px;color:var(--mut);padding:8px 0 2px}
 
 /* поделиться проектом */
 .npr{display:flex;gap:8px;margin-bottom:12px}
@@ -1402,7 +1403,7 @@ input[type=date]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:n
 <div id="view"></div>
 </div></div>
 <script>
-var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='4 ноября 2026';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1450,7 +1451,7 @@ function render(){
   sh.className=showMore?'show':'';
   sh.innerHTML='<div class="shb" onclick="toggleMore()"></div><div class="shc"><div class="shg"></div>'+T.filter(function(t){return !MAIN[t[0]]}).map(function(t){return '<button class="shi'+(tab===t[0]?' on':'')+'" onclick="showMore=false;setTab(\''+t[0]+'\')"><span class="ic">'+t[1]+'</span><span>'+t[2]+'</span>'+(t[0]==='edits'&&tl>0?'<em class="bd">'+tl+'</em>':'')+'</button>'}).join('')
    +'<button class="shi" onclick="showMore=false;showTheme=true;render();window.scrollTo(0,0)"><span class="ic">'+SV('<circle cx="12" cy="12" r="8.5"/><circle cx="8.5" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/><path d="M12 20.5c-1.5 0-2-1.5-1-2.5s.5-3 2-3h3"/>')+'</span><span>Тема</span></button>'
-   +'<button class="shi" onclick="showMore=false;showData=true;render();window.scrollTo(0,0)"><span class="ic">'+SV('<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/>')+'</span><span>Перенос и копия</span></button></div>';
+   +'<button class="shi" onclick="showMore=false;showData=true;render();window.scrollTo(0,0)"><span class="ic">'+SV('<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/>')+'</span><span>Перенос и копия</span></button><div class="shv">ShotList · версия '+APPV+'</div></div>';
   var f={cal:vCal,replies:vReplies,stats:vStats,projects:vProjects,budget:vBudget,edits:vEdits,notes:vNotes}[tab];
   document.getElementById('data').innerHTML=(showTheme?themePanel():'')+(showData?dataPanel():'');
   document.getElementById('view').innerHTML=f();
@@ -1909,7 +1910,7 @@ function delP(id){if(armed!==id){armed=id;render();return}armed=null;S.projects=
 function setQ(val){fq=val;render();var e=document.getElementById('f_q');e.focus();e.setSelectionRange(val.length,val.length)}
 function toggleData(){showData=!showData;dmsg='';render()}
 function dataPanel(){return '<div class="card"><div class="row"><b>Перенос и копия</b><button class="btn s" onclick="toggleData()">Готово</button></div>'
- +'<div class="autos">✓ Все изменения сохраняются автоматически на этом устройстве'+(S.lastBackup?'. Последняя копия в файл: '+new Date(S.lastBackup).toLocaleDateString('ru-RU'):'')+'</div><div class="mut" style="margin:6px 0 12px">Сохрани копию в файл и отправь её на другое устройство (AirDrop, Telegram, почта). Там нажми «Загрузить из файла». В копию входят проекты, оплаты, заметки, ответы и прикреплённые файлы.</div>'
+ +'<div class="mut" style="margin-top:4px;font-size:11px">Версия приложения: '+APPV+'</div><div class="autos">✓ Все изменения сохраняются автоматически на этом устройстве'+(S.lastBackup?'. Последняя копия в файл: '+new Date(S.lastBackup).toLocaleDateString('ru-RU'):'')+'</div><div class="mut" style="margin:6px 0 12px">Сохрани копию в файл и отправь её на другое устройство (AirDrop, Telegram, почта). Там нажми «Загрузить из файла». В копию входят проекты, оплаты, заметки, ответы и прикреплённые файлы.</div>'
  +'<div class="ract" style="margin-top:0"><button class="btn" onclick="exportFile()">Сохранить копию в файл</button><label class="btn s fpick" style="flex:1;justify-content:center">Загрузить из файла<input type="file" accept=".json,application/json" onchange="importFile(this)"></label></div>'
  +'<details class="adv"><summary>Перенос кодом (без файлов)</summary><textarea id="d_o" rows="3" readonly>'+esc(JSON.stringify(S))+'</textarea><button class="btn s full" onclick="copyData()">Скопировать код</button><textarea id="d_i" rows="3" placeholder="Вставьте сюда код с другого устройства" style="margin-top:10px"></textarea><button class="btn s full" onclick="importData()">Загрузить код (заменит текущие данные)</button></details>'
  +'<div class="mut" style="margin-top:8px">'+esc(dmsg)+'</div></div>'}
@@ -2036,7 +2037,7 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persisted(
 ['gesturestart','gesturechange','gestureend'].forEach(function(ev){document.addEventListener(ev,function(e){e.preventDefault()},{passive:false})});
 document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
 
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(function(r){r.update();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')r.update()})}).catch(function(){})})}
 </script>
 </body>
 </html>
