@@ -38,6 +38,10 @@ button:active{transform:scale(.97)}
     return navigator.serviceWorker.register('sw.js',{updateViaCache:'none'})
   }).then(function(){
     return navigator.serviceWorker.ready
+  }).then(function(reg){
+    var w=reg.active;
+    if(!w||w.state==='activated')return;
+    return new Promise(function(ok){var d=false,f=function(){if(!d&&w.state==='activated'){d=true;ok()}};w.addEventListener('statechange',f);setTimeout(function(){if(!d){d=true;ok()}},4000)})
   }).then(function(){
     go.disabled=false;x.textContent='Нажми кнопку, затем «Добавить все».';open()
   }).catch(function(){fail('Не удалось подготовить файл','Вернись в EventLab и нажми кнопку календаря ещё раз.')});
