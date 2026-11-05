@@ -1,6 +1,6 @@
 // EventLab — офлайн-режим. Страница берётся из сети (чтобы обновления приходили сразу),
 // а без интернета открывается сохранённая копия. Шрифты и иконки кешируются.
-const CACHE = 'shotlist-v7';
+const CACHE = 'shotlist-v8';
 const CORE = ['./', 'index.html', 'manifest-v2.webmanifest', 'icons/icon-192-v4.png', 'icons/icon-512-v4.png', 'icons/apple-touch-icon-v4.png'];
 
 self.addEventListener('install', e => {
@@ -8,13 +8,17 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== 'shotlist-cal').map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   if (new URL(req.url).pathname.endsWith('/cal.html')) return; // страница календаря не должна подменять копию приложения
+  if (new URL(req.url).pathname.endsWith('/event.ics')) { // файл календаря готовит cal.html прямо на устройстве
+    e.respondWith(caches.open('shotlist-cal').then(c => c.match('event.ics')).then(r => r || new Response('Нет данных календаря', { status: 404 })));
+    return;
+  }
   const isPage = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
   if (isPage) {
     // сначала сеть, без сети — копия

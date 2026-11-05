@@ -11,27 +11,36 @@ body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:c
 main{max-width:340px}
 h1{font-size:26px;font-weight:600;margin:0 0 8px}
 p{margin:0 0 20px;color:#5E5548}
-a.btn{display:block;padding:15px 20px;border-radius:99px;background:#C81E2E;color:#fff;font-weight:600;text-decoration:none}
+button{display:block;width:100%;padding:15px 20px;border:0;border-radius:99px;background:#C81E2E;color:#fff;font:600 17px -apple-system,'Helvetica Neue',Arial,sans-serif}
+button:active{transform:scale(.97)}
 </style>
 </head>
 <body>
 <main>
   <h1 id="t">Добавить в календарь</h1>
-  <p id="x">Нажми кнопку, затем «Добавить все».</p>
-  <a class="btn" id="go" href="#">Открыть календарь</a>
+  <p id="x">Готовлю файл…</p>
+  <button id="go" disabled>Открыть календарь</button>
 </main>
 <script>
 (function(){
-  var go=document.getElementById('go'),raw=location.hash.slice(1),text='';
-  try{var b=raw.replace(/-/g,'+').replace(/_/g,'/');text=decodeURIComponent(escape(atob(b)))}catch(e){}
-  if(text.indexOf('BEGIN:VCALENDAR')!==0){
-    document.getElementById('t').textContent='Не удалось открыть календарь';
-    document.getElementById('x').textContent='Вернись в EventLab и нажми кнопку календаря ещё раз.';
-    go.style.display='none';return}
+  var go=document.getElementById('go'),t=document.getElementById('t'),x=document.getElementById('x'),raw=location.hash.slice(1),text='',CACHE='shotlist-cal';
+  function fail(a,b){t.textContent=a;x.textContent=b;go.style.display='none'}
+  try{text=decodeURIComponent(escape(atob(raw.replace(/-/g,'+').replace(/_/g,'/'))))}catch(e){}
+  if(text.indexOf('BEGIN:VCALENDAR')!==0){fail('Не удалось открыть календарь','Вернись в EventLab и нажми кнопку календаря ещё раз.');return}
   var n=(text.match(/BEGIN:VEVENT/g)||[]).length;
-  document.getElementById('t').textContent=n===1?'Добавить проект в календарь':'Добавить проекты в календарь: '+n;
-  go.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(text);
-  setTimeout(function(){location.href=go.href},150);
+  t.textContent=n===1?'Добавить проект в календарь':'Добавить проекты в календарь: '+n;
+  if(!('serviceWorker' in navigator)||!('caches' in window)){fail('Этот браузер не подходит','Открой ссылку в Safari.');return}
+  function open(){location.href='event.ics?t='+Date.now()}
+  go.onclick=open;
+  caches.open(CACHE).then(function(c){
+    return c.put('event.ics',new Response(text,{headers:{'Content-Type':'text/calendar; charset=utf-8'}}))
+  }).then(function(){
+    return navigator.serviceWorker.register('sw.js',{updateViaCache:'none'})
+  }).then(function(){
+    return navigator.serviceWorker.ready
+  }).then(function(){
+    go.disabled=false;x.textContent='Нажми кнопку, затем «Добавить все».';open()
+  }).catch(function(){fail('Не удалось подготовить файл','Вернись в EventLab и нажми кнопку календаря ещё раз.')});
 })();
 </script>
 </body>
