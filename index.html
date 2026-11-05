@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+.icsb{margin:0 0 12px;width:100%}
 html.stage{padding:0!important;height:var(--sh);overflow:hidden}
 html.stage body{height:var(--sh);min-height:0!important;margin:0;overflow:hidden}
 html.stage .app{display:block!important;position:relative;height:var(--sh);max-width:none;margin:0;overflow:hidden}
@@ -1794,7 +1795,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · название';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · календарь iPhone';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1877,7 +1878,20 @@ function ie(t){return String(t||'').split(BS).join(BS+BS).split(';').join(BS+';'
 function pdesc(p){return 'Организаторы: '+(p.org||'—')+NL+'Бюджет: '+money(p.amount)+', оплачено '+money(p.paid)+(p.extra?NL+p.extra:'')}
 function ptitle(p){return (p.type||'Съёмка')+': '+(p.names||'Проект')}
 function gcal(p){return 'https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text='+encodeURIComponent(ptitle(p))+'&amp;dates='+ymd(p.date)+'/'+nextD(p.date)+'&amp;location='+encodeURIComponent(p.place||'')+'&amp;details='+encodeURIComponent(pdesc(p))}
-function calBtns(p){if(!p.date)return '';return '<div style="margin-top:8px"><a class="btn s" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+gcal(p)+'">Добавить в Google Календарь</a></div>'}
+function icsEsc(t){return String(t==null?'':t).replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;')}
+function icsFold(l){var o='',n=0,w=0;for(var i=0;i<l.length;i++){var c=l.charCodeAt(i),b=c<128?1:c<2048?2:3;if(n+b>73){o+='\r\n ';n=1}o+=l.charAt(i);n+=b}return o}
+function icsEvent(p){var st=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,''),tm=(p.timing||[]).slice().sort(function(a,b){return (a.t||'').localeCompare(b.t||'')}).map(function(x){return (x.t||'')+' '+(x.n||'')}).join('\n'),d=pdesc(p)+(tm?'\n\nТайминг:\n'+tm:''),w=p.warn==null?3:+p.warn,L=['BEGIN:VEVENT','UID:eventlab-'+p.id+'@eventlab','DTSTAMP:'+st,'DTSTART;VALUE=DATE:'+ymd(p.date),'DTEND;VALUE=DATE:'+nextD(p.date),'SUMMARY:'+icsEsc(ptitle(p))];
+  if(p.place)L.push('LOCATION:'+icsEsc(p.place));if(d)L.push('DESCRIPTION:'+icsEsc(d));
+  if(w>0)L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(ptitle(p)),'TRIGGER:-P'+w+'D','END:VALARM');
+  L.push('END:VEVENT');return L}
+function icsText(list){var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EventLab//RU','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:EventLab'];list.forEach(function(p){L=L.concat(icsEvent(p))});L.push('END:VCALENDAR');return L.map(icsFold).join('\r\n')+'\r\n'}
+function icsSend(list,name){if(!list.length){toast('Нет проектов с датой','Ок',hideToast);return}
+  var file=new File([icsText(list)],name,{type:'text/calendar'}),share=function(){hideToast();deliverFile(file,'Календарь EventLab')};
+  if(isIOS()){var u=URL.createObjectURL(file),a=document.createElement('a');a.href=u;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},60000);toast('Окно календаря не открылось?','Файл',share)}
+  else deliverFile(file,'Календарь EventLab')}
+function icsOne(id){var p=S.projects.find(function(x){return x.id===id});if(p&&p.date)icsSend([p],'EventLab-проект.ics')}
+function icsAll(){var t=today();icsSend(S.projects.filter(function(p){return p.date&&p.date>=t&&!isFinSt(p.status)&&p.status!==DONE}),'EventLab-календарь.ics')}
+function calBtns(p){if(!p.date)return '';return '<div style="margin-top:8px"><a class="btn s" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+gcal(p)+'">Добавить в Google Календарь</a> <button class="btn s" onclick="icsOne(\''+p.id+'\')">В календарь iPhone</button></div>'}
 function pick(d){selDay=d;render()}
 function goto(d){selDay=d;calM=d.slice(0,7);render()}
 function newOn(d){preDate=d;editId=null;showForm=true;tab='projects';render();window.scrollTo(0,0)}
@@ -1950,7 +1964,7 @@ function vProjects(){
     +(CR!=='video'?'':'<div class="g2"><div><label>Монтажей</label><input type="number" id="f_et" value="'+esc(p.editsTotal==null?1:p.editsTotal)+'"></div><div><label>Готово</label><input type="number" id="f_ed" value="'+esc(p.editsDone||0)+'"></div></div>')+(CR==='org'?'<label>Бюджет заказчика на всё мероприятие</label><input type="number" id="f_cb" value="'+esc(p.cbudget||'')+'" placeholder="Необязательно">':'')
     +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea id="f_x" rows="3">'+esc(p.extra)+'</textarea>'
     +'<div class="row"><button class="btn" onclick="saveProject()">Сохранить</button><button class="btn s" onclick="showForm=false;openId=editId;editId=null;render()">Отмена</button></div></div>';
-  } else h+='<div class="npr"><button class="btn" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button><button class="btn s" onclick="pasteProject()">Вставить</button><label class="btn s fpick">Файл<input type="file" accept=".json,application/json" onchange="importProjInput(this)"></label></div>';
+  } else h+='<div class="npr"><button class="btn" onclick="showForm=true;editId=null;preDate=\'\';render()">+ Новый проект</button><button class="btn s" onclick="pasteProject()">Вставить</button><label class="btn s fpick">Файл<input type="file" accept=".json,application/json" onchange="importProjInput(this)"></label></div>'+(S.projects.some(function(p){return p.date&&p.date>=today()&&!isFinSt(p.status)})?'<button class="btn s full icsb" onclick="icsAll()">Все будущие проекты в календарь iPhone</button>':'');
   if(!showForm&&S.projects.length){
     h+='<div class="pf"><div class="pfs"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input id="f_q" placeholder="Поиск" value="'+esc(fq)+'" oninput="setQ(this.value)"></div>'
      +'<label class="pfd'+(fdt?' on':'')+'"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>'+(fdt?fd(fdt).slice(0,5):'Дата')+'</span><input type="date" id="f_dt" value="'+esc(fdt)+'" onchange="fdt=this.value;render()"></label>'
@@ -2001,7 +2015,7 @@ function vDetail(p){
   var c='';
   if(p.phone)c+='<a class="btn s" target="_blank" href="tel:'+esc(p.phone.replace(/[^0-9+]/g,''))+'">Позвонить</a><a class="btn s" target="_blank" rel="noopener" href="https://wa.me/'+digits(p.phone)+'">WhatsApp</a>';
   if(p.tg)c+='<a class="btn s" target="_blank" rel="noopener" href="https://t.me/'+esc(p.tg.replace(/^https?:\/\/t\.me\//,'').replace(/^@/,''))+'">Telegram</a>';
-  if(p.date)c+='<a class="btn s" target="_blank" rel="noopener" href="'+gcal(p)+'">В Google Календарь</a>';
+  if(p.date)c+='<button class="btn s" onclick="icsOne(\''+p.id+'\')">В календарь iPhone</button><a class="btn s" target="_blank" rel="noopener" href="'+gcal(p)+'">В Google Календарь</a>';
   h+=(c?'<div class="contacts">'+c+'</div>':'')+'</div>';
   function sh(k,t,sm){var o=!!secO[k];return '<button class="sec sx'+(o?'':' cl')+'" onclick="tgS(\''+k+'\')" aria-expanded="'+o+'"><span>'+t+'</span><small>'+sm+' <svg class="chev'+(o?' up':'')+'" viewBox="0 0 12 12"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></small></button>'}
   if(roleOf(p)==='venue')h+=hallSec(p,sh);
