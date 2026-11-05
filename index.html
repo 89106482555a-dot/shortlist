@@ -30,21 +30,41 @@
 .emi .li{width:26px;height:26px}
 .tpk{margin-top:14px}
 .tpk .tho i{height:72px}
-@keyframes vfade{from{opacity:.25}to{opacity:1}}
-#view.vfade{animation:vfade .2s ease-out}
-@keyframes ckpop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
-.ck.pop i{animation:ckpop .24s ease-out}
-.btn,.day,.svt,.tho,.tabs button{transition:transform .12s ease-out}
-.btn:active,.day:active,.svt:active,.tho:active,.tabs button:active{transform:scale(.97)}
-@media (prefers-reduced-motion:reduce){#view.vfade,.ck.pop i{animation:none}.btn,.day,.svt,.tho,.tabs button{transition:none}.btn:active,.day:active,.svt:active,.tho:active,.tabs button:active{transform:none}}
-#tex{position:fixed;inset:0;z-index:0;pointer-events:none;-webkit-mask:var(--tex) center/cover no-repeat;mask:var(--tex) center/cover no-repeat}
-.app{position:relative;z-index:1}
+@keyframes vrise{from{opacity:0;transform:translateY(26px) scale(.97)}to{opacity:1;transform:none}}
+#view.vfade>*,#view.vfade>.svg>*{animation:vrise .5s cubic-bezier(.2,1.25,.4,1) both}
+#view.vfade>.svg{animation:none}
+#view.vfade>*:nth-child(2),#view.vfade>.svg>*:nth-child(2){animation-delay:55ms}
+#view.vfade>*:nth-child(3),#view.vfade>.svg>*:nth-child(3){animation-delay:110ms}
+#view.vfade>*:nth-child(4),#view.vfade>.svg>*:nth-child(4){animation-delay:165ms}
+#view.vfade>*:nth-child(5),#view.vfade>.svg>*:nth-child(5){animation-delay:220ms}
+#view.vfade>*:nth-child(6),#view.vfade>.svg>*:nth-child(6){animation-delay:275ms}
+#view.vfade>*:nth-child(7),#view.vfade>.svg>*:nth-child(7){animation-delay:330ms}
+#view.vfade>*:nth-child(8),#view.vfade>.svg>*:nth-child(8){animation-delay:385ms}
+@keyframes vopen{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
+#view.vopen{animation:vopen .46s cubic-bezier(.2,1.2,.36,1) both;transform-origin:50% 22%}
+@keyframes texin{from{opacity:0;transform:scale(1.16)}to{transform:none}}
+body.texgo #tex{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
+@keyframes heroin{from{opacity:0;transform:translateY(34%) scale(.94)}to{opacity:1;transform:none}}
+body.texgo .hero h1{animation:heroin .6s cubic-bezier(.2,1.2,.36,1) both;transform-origin:0 100%}
+@keyframes icpop{0%{transform:scale(.7) translateY(5px)}55%{transform:scale(1.28) translateY(-4px)}100%{transform:none}}
+#tabs.tgo button.on .ic{animation:icpop .46s cubic-bezier(.3,1.3,.5,1)}
+@keyframes ckpop{0%{transform:scale(.4)}55%{transform:scale(1.5)}100%{transform:scale(1)}}
+@keyframes ckring{from{box-shadow:0 0 0 0 var(--ac)}to{box-shadow:0 0 0 16px transparent}}
+.ck.pop i{animation:ckpop .42s cubic-bezier(.3,1.3,.5,1),ckring .6s ease-out}
+@keyframes ckrow{0%{transform:translateX(0)}35%{transform:translateX(7px)}100%{transform:translateX(0)}}
+.ck.pop span{animation:ckrow .4s ease-out;display:inline-block}
+@keyframes daypop{0%{transform:scale(.55)}55%{transform:scale(1.22)}100%{transform:scale(1)}}
+.day.sel.pop{animation:daypop .4s cubic-bezier(.3,1.3,.5,1)}
+.btn,.day,.svt,.tho,.tabs button,.rpo{transition:transform .16s cubic-bezier(.3,1.6,.5,1)}
+.btn:active,.day:active,.svt:active,.tho:active,.tabs button:active,.rpo:active{transform:scale(.93)}
+@media (prefers-reduced-motion:reduce){#view.vfade>*,#view.vfade>.svg>*,#view.vopen,body.texgo #tex,body.texgo .hero h1,#tabs.tgo button.on .ic,.ck.pop i,.ck.pop span,.day.sel.pop{animation:none}.btn,.day,.svt,.tho,.tabs button,.rpo{transition:none}.btn:active,.day:active,.svt:active,.tho:active,.tabs button:active,.rpo:active{transform:none}}
+#tex{position:fixed;inset:0;z-index:-1;pointer-events:none;-webkit-mask:var(--tex) center/cover no-repeat;mask:var(--tex) center/cover no-repeat}
 .pseg{margin:0 0 10px}
 .pcard.past{opacity:1}
 .tapc{cursor:pointer}
 .hero .hs .hsm{flex:1.35!important}
 @media (max-width:719px){.hero .hs .hsm b{font-size:clamp(15px,4.8vw,22px)!important}}
-html,body{overscroll-behavior-x:none}
+html,body{overscroll-behavior:none}
 
 /* статистика в шапке: 4 колонки */
 .hs div{min-width:0}
@@ -1419,7 +1439,7 @@ input[type=date]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:n
 :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#EAD9C4;--card:#F5EADB;--tx:#15110F;--mut:#62574B;--line:#15110F;--hair:rgba(21,17,15,.2);--ac:#AD1A27;--gold:#AD1A27;--red:#AD1A27;--soft:rgba(173,26,39,.1);--pri:#15110F;--priTx:#F5EADB;--navOn:#BE1E2D;--navOnTx:#F5EADB;--ok:#2F6B3A;--bad:#AD1A27;--hero:#BE1E2D;--heroTx:#F5EADB;color-scheme:light}
 html{background:#EAD9C4}
 html:before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:#BE1E2D;z-index:2}
-body{background:var(--bg)!important;color:var(--tx)}
+body{background:transparent!important;color:var(--tx)}
 body:after{display:none}
 .hero{background:none!important;border-radius:0;padding:0!important;margin:-14px -14px 14px;color:var(--tx);overflow:hidden;text-align:left;border:0}
 .hero:after{display:none}
@@ -1697,6 +1717,8 @@ input,select,textarea{background:#1B1B19;color:var(--tx);border:1px solid var(--
  .hero .hs div{padding-left:28px}
 }
 #tex{display:none}
+body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){body.texgo:before{animation:none}}
 </style>
 </head>
 <body>
@@ -1732,7 +1754,7 @@ input,select,textarea{background:#1B1B19;color:var(--tx);border:1px solid var(--
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · оформление';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · анимации';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -2378,7 +2400,15 @@ function ico(k){var I={
 function emptyBox(ic,t,x,b,on){return '<div class="card emp"><span class="emi">'+ico(ic)+'</span><b>'+t+'</b><p>'+x+'</p>'+(b?'<button class="btn" onclick="'+on+'">'+b+'</button>':'')+'</div>'}
 function emptyNew(ic,t,x){return emptyBox(ic,t,x,'+ Новый проект',"newOn('')")}
 var _vKey='',_ckIdx=-1;
-function viewFx(){var k=tab+'|'+openId+'|'+showForm,v=document.getElementById('view');if(k!==_vKey){if(_vKey){v.classList.remove('vfade');void v.offsetWidth;v.classList.add('vfade')}_vKey=k}if(_ckIdx>=0){var L=v.querySelectorAll('.ck');if(L[_ckIdx])L[_ckIdx].classList.add('pop');_ckIdx=-1}}
+var _fxT=null,_dayPop=false;
+function viewFx(){var k=tab+'|'+openId+'|'+showForm+'|'+(tab==='cal'?calM+'|'+calView:''),v=document.getElementById('view'),T=document.getElementById('tabs');
+  if(k!==_vKey){var was=_vKey;_vKey=k;if(was){
+    var open=!!openId;v.classList.remove('vfade','vopen');T&&T.classList.remove('tgo');document.body.classList.remove('texgo');void v.offsetWidth;
+    v.classList.add(open?'vopen':'vfade');if(T)T.classList.add('tgo');if(was.split('|')[0]!==tab)document.body.classList.add('texgo');
+    clearTimeout(_fxT);_fxT=setTimeout(function(){v.classList.remove('vfade','vopen');if(T)T.classList.remove('tgo');document.body.classList.remove('texgo')},950)}}
+  if(_ckIdx>=0){var L=v.querySelectorAll('.ck');if(L[_ckIdx])L[_ckIdx].classList.add('pop');_ckIdx=-1}
+  if(_dayPop){var d=v.querySelector('.day.sel');if(d)d.classList.add('pop');_dayPop=false}}
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#view .day'))_dayPop=true},true);
 document.addEventListener('click',function(e){var c=e.target.closest?e.target.closest('#view .ck'):null;if(c)_ckIdx=Array.prototype.indexOf.call(document.querySelectorAll('#view .ck'),c)},true);
 function goSet(k){var m={theme:'theme',backup:'backup',security:'security'};if(m[k]){setTab(m[k])}else{setTab('budget')}window.scrollTo(0,0)}
 function backBtn(){return '<button class="btn s bkb" onclick="setTab(\'services\')">‹ Сервисы</button>'}
