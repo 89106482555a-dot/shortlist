@@ -1,7 +1,7 @@
 // EventLab — офлайн-режим. Страница берётся из сети (чтобы обновления приходили сразу),
 // а без интернета открывается сохранённая копия. Шрифты и иконки кешируются.
-const CACHE = 'shotlist-v5';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192-v4.png', 'icons/icon-512-v4.png', 'icons/apple-touch-icon-v4.png'];
+const CACHE = 'shotlist-v6';
+const CORE = ['./', 'index.html', 'manifest-v2.webmanifest', 'icons/icon-192-v4.png', 'icons/icon-512-v4.png', 'icons/apple-touch-icon-v4.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

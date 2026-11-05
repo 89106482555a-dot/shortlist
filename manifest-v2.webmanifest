@@ -1,0 +1,30 @@
+{
+  "name": "EventLab — планер для свадеб и мероприятий",
+  "short_name": "EventLab",
+  "description": "Проекты, бюджет, договоры и заметки для специалистов свадеб и мероприятий",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0F0C",
+  "theme_color": "#0D0F0C",
+  "icons": [
+    {
+      "src": "icons/icon-192-v4.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512-v4.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512-v4.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
