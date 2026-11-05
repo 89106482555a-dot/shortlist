@@ -16,6 +16,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+.ins{margin:14px 0 6px;padding:14px;border-radius:14px;background:var(--soft,rgba(127,127,127,.1));border:1px solid var(--hair,var(--line));text-align:left}
+.ins>b{display:block;font-size:16px;margin-bottom:8px}
+.ins ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px}
+.ins li{font-size:14px;line-height:1.4}
+.ins li .btn{margin-top:8px}
+.insar{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:300;width:44px;height:44px;border-radius:50%;background:var(--ac,#c33);display:flex;align-items:center;justify-content:center;animation:insb 1.1s ease-in-out infinite;pointer-events:none}
+.insar.r{left:auto;right:22px;transform:none}
+.insar svg{width:26px;height:26px;fill:none;stroke:var(--priTx,#fff);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+@keyframes insb{50%{margin-bottom:-8px}}
+@media (prefers-reduced-motion:reduce){.insar{animation:none}}
 .tmpv{max-height:88vh;overflow-y:auto}
 .tmpv img{display:block;width:100%;height:auto;border-radius:10px}
 .navb{display:flex;width:fit-content;margin-top:6px;padding:7px 14px;min-height:0}
@@ -1798,7 +1808,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · красивый тайминг';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · установка по ссылке';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -3271,17 +3281,20 @@ function isStandalone(){try{return navigator.standalone===true||matchMedia('(dis
 function parseShared(str,cb){var m=String(str||'').match(/#(pe?)=([A-Za-z0-9_\-]+)/);
   if(m){unzipStr(m[2]).then(function(t){var d=JSON.parse(t);withDecrypt(d,cb)}).catch(function(){toast('Ссылка повреждена или неполная','Ок',hideToast)});return true}
   try{var d=JSON.parse(str);if(d&&(d.kind==='project'||d.enc)){withDecrypt(d,cb);return true}}catch(e){}return false}
+var _bip=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_bip=e});
+function iosNewBar(){var m=navigator.userAgent.match(/Version\/(\d+)/);return !!m&&+m[1]>=26}
 function impModal(d,raw){var x=d.p||{},m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
   var iosWeb=isIOS()&&!isStandalone();
-  m.innerHTML='<div class="pwb"></div><div class="pwc card imc"><div class="tlogo">'+RPROF[S.role||'video'].abbr+'</div><b>Тебе прислали проект</b>'
+  m.innerHTML='<div class="pwb"></div><div class="pwc card imc"><div class="tlogo">EL</div><b>Тебе прислали проект</b>'
    +'<div class="imp"><div class="pnm">'+esc(x.names||'Проект')+'</div><div class="mut">'+[x.date?fd(x.date):'',x.type||'',x.place||''].filter(Boolean).map(esc).join(' · ')+'</div>'
    +'<div class="mut" style="margin-top:4px">'+[(x.timing||[]).length?'тайминг':'',x.quiz&&Object.keys(x.quiz).length?'анкета':'',(x.tasks||[]).length?'задачи':'',d.fin?'финансы':''].filter(Boolean).join(', ')+'</div></div>'
-   +(iosWeb?'<div class="mut" style="margin:10px 0">Ссылка открылась в Safari. Нажми кнопку, затем открой EventLab с экрана «Домой» → «Проекты» → «Вставить».</div><button class="btn full" id="imgo">Скопировать для EventLab</button><button class="btn s full" style="margin-top:8px" id="imhere">Добавить здесь, в Safari</button>'
-          :'<button class="btn full" style="margin-top:12px" id="imgo">Добавить в EventLab</button>')
-   +'<button class="lkf" id="imx">Отмена</button></div>';
+   +(iosWeb?'<div class="ins"><b>Поставь EventLab на телефон</b><ol><li><span>Скопируй проект</span><button class="btn full" id="imgo">Скопировать проект</button></li><li><span>Внизу Safari нажми <b>'+(iosNewBar()?'•••, затем «Поделиться»':'«Поделиться»')+'</b> и выбери <b>«На экран Домой»</b></span></li><li><span>Открой EventLab с иконки → «Проекты» → «Вставить»</span></li></ol></div><button class="btn s full" style="margin-top:4px" id="imhere">Просто открыть здесь, в Safari</button>'
+          :'<button class="btn full" style="margin-top:12px" id="imgo">Добавить в EventLab</button>'+(_bip&&!isStandalone()?'<button class="btn s full" style="margin-top:8px" id="imins">Добавить и установить приложение</button>':''))
+   +'<button class="lkf" id="imx">Отмена</button></div>'+(iosWeb?'<div class="insar'+(iosNewBar()?' r':'')+'" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>':'');
   m.className='show';var close=function(){m.className='';m.innerHTML=''};
   document.getElementById('imx').onclick=close;m.querySelector('.pwb').onclick=close;
-  document.getElementById('imgo').onclick=function(){if(iosWeb){copyText('ShotList-проект '+raw).then(function(){close();toast('Скопировано. Открой EventLab → «Проекты» → «Вставить»','Ок',hideToast)})}else{close();importProjectPack(d)}};
+  document.getElementById('imgo').onclick=function(){var b=this;if(iosWeb){copyText('ShotList-проект '+raw).then(function(){b.textContent='Скопировано ✓';b.classList.add('s')})}else{close();importProjectPack(d)}};
+  var ins=document.getElementById('imins');if(ins)ins.onclick=function(){var e=_bip;_bip=null;close();importProjectPack(d);if(e)e.prompt()};
   var hr=document.getElementById('imhere');if(hr)hr.onclick=function(){close();importProjectPack(d)}}
 function checkHashImport(){var h=location.hash||'';if(!/#pe?=/.test(h))return false;var raw=location.href;
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
