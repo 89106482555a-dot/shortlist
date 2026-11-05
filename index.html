@@ -1795,7 +1795,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · календарь 5';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · вопрос о календаре';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1892,6 +1892,9 @@ function icsSend(list,name){if(!list.length){toast('Нет проектов с �
   document.addEventListener('visibilitychange',onH);
   setTimeout(function(){document.removeEventListener('visibilitychange',onH);if(!left)toast('Календарь не открылся?','Файл',function(){hideToast();deliverFile(file,'Календарь EventLab')})},1800);
   location.href=isStandalone()?url.replace(/^https:\/\//,'x-safari-https://'):url}
+function calAsk(id,edit){var m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
+  m.innerHTML='<div class="pwb"></div><div class="pwc card"><b>Добавить в календарь iPhone?</b><div class="mut" style="margin-top:6px">'+(edit?'Проект изменился. Если в календаре появится дубль, удали старое событие.':'Откроется окно календаря, там нажми «Добавить все».')+'</div><div class="ract" style="margin-top:14px"><button class="btn s" id="cala0">Не сейчас</button><button class="btn" id="cala1">Добавить</button></div></div>';
+  m.className='show';var close=function(){m.className='';m.innerHTML=''};m.querySelector('.pwb').onclick=close;document.getElementById('cala0').onclick=close;document.getElementById('cala1').onclick=function(){close();hideToast();icsOne(id)}}
 function icsOne(id){var p=S.projects.find(function(x){return x.id===id});if(p&&p.date)icsSend([p],'EventLab-проект.ics')}
 function icsAll(){var t=today();icsSend(S.projects.filter(function(p){return p.date&&p.date>=t&&!isFinSt(p.status)&&p.status!==DONE}),'EventLab-календарь.ics')}
 function calBtns(p){if(!p.date)return '';return '<div style="margin-top:8px"><a class="btn s" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+gcal(p)+'">Добавить в Google Календарь</a> <button class="btn s" onclick="icsOne(\''+p.id+'\')">В календарь iPhone</button></div>'}
@@ -2518,16 +2521,16 @@ function goBackP(){var b=backTab;backTab=null;openId=null;if(b){setTab(b)}else r
 function saveProject(){
   var o={names:v('f_n'),date:v('f_d'),place:v('f_pl'),org:v('f_o'),type:v('f_t'),status:v('f_s'),warn:+v('f_w'),deadline:v('f_dd'),dwarn:+v('f_dw'),phone:v('f_ph').trim(),tg:v('f_tg').trim(),extra:v('f_x'),client:v('f_cl'),taxOn:document.getElementById('f_tx').checked,ak:document.getElementById('f_ak').checked,amount:+v('f_a')||0,editsTotal:+v('f_et')||0,editsDone:+v('f_ed')||0};if(CR==='org')o.cbudget=+v('f_cb')||0;
   var pkEl=document.getElementById('f_pk');if(pkEl){o.packId=pkEl.value;var pkO=S.packs.find(function(k){return k.id===pkEl.value});o.pack=pkO?pkO.name:''}
-  var id=editId;
-  if(editId){var p=S.projects.find(function(x){return x.id===editId});var tch=p.type!==o.type&&!(p.tasks||[]).some(function(t){return t.done});Object.assign(p,o);if(tch)p.tasks=tplFor(o.type)}
+  var id=editId,calChg=false;
+  if(editId){var p=S.projects.find(function(x){return x.id===editId});calChg=p.date!==o.date||p.names!==o.names||p.place!==o.place;var tch=p.type!==o.type&&!(p.tasks||[]).some(function(t){return t.done});Object.assign(p,o);if(tch)p.tasks=tplFor(o.type)}
   else{var pre=+v('f_p')||0;o.id=id=uid();o.payments=pre>0?[{id:uid(),amount:pre,date:today(),note:'Предоплата'}]:[];o.tasks=tplFor(o.type);o.gearDone={};o.role=CR;o.created=today();if(CR==='host')o.sends=sendFor(o.type);if(CR==='org')o.vendors=[];if(CR==='dj')o.moments=momFor(o.type);if(CR==='band')o.line=bandLine();syncPaid(o);S.projects.push(o)}
   var wasEdit=!!editId;
   openId=wasEdit?id:null;justSaved=wasEdit?null:id;
   if(o.date){selDay=o.date;calM=o.date.slice(0,7)}
   showForm=false;editId=null;migrate();save();render();
   if(!wasEdit){fq='';fdt='';fs='';ft='';render();var el=document.querySelector('.swp[data-id="'+id+'"]');if(el)el.scrollIntoView({block:'center',behavior:'smooth'});
-    toast('Проект «'+(o.names||'Без названия')+'» сохранён','Открыть',function(){hideToast();openP(id)});setTimeout(function(){justSaved=null;var c=document.querySelector('.swc.saved');if(c)c.classList.remove('saved')},2600)}
-  else toast('Изменения сохранены','Ок',hideToast);
+    toast('Проект «'+(o.names||'Без названия')+'» сохранён','Открыть',function(){hideToast();openP(id)});setTimeout(function(){justSaved=null;var c=document.querySelector('.swc.saved');if(c)c.classList.remove('saved')},2600);if(o.date)calAsk(id,false)}
+  else{toast('Изменения сохранены','Ок',hideToast);if(o.date&&calChg)calAsk(id,true)}
 }
 function editP(id){tab='projects';openId=null;editId=id;showForm=true;render();window.scrollTo(0,0)}
 function delP(id){if(armed!==id){armed=id;render();return}armed=null;S.projects=S.projects.filter(function(p){return p.id!==id});save();render()}
