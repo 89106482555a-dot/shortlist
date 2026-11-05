@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+.navb{display:flex;width:fit-content;margin-top:6px;padding:7px 14px;min-height:0}
 .icsb{margin:0 0 12px;width:100%}
 html.stage{padding:0!important;height:var(--sh);overflow:hidden}
 html.stage body{height:var(--sh);min-height:0!important;margin:0;overflow:hidden}
@@ -1795,7 +1796,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · вопрос о календаре';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · навигатор';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1870,7 +1871,7 @@ function dlAlerts(){return S.projects.filter(function(p){if(!p.deadline||isFinSt
 function bkAlert(){if(!S.projects.length)return '';var last=+S.lastBackup||0,days=Math.floor((Date.now()-last)/864e5),snooze=+S.bkSnooze||0;
   if(last&&days<7)return '';if(Date.now()<snooze)return '';
   return '<div class="banner alert bk"><span onclick="toggleData()">Сделай резервную копию<small>'+(last?'последняя '+days+' дн. назад':'копий ещё не было')+' · данные хранятся только на этом устройстве</small></span><button class="btn s" onclick="S.bkSnooze=Date.now()+3*864e5;save();render()">Позже</button></div>'}
-function alerts(){return bkAlert()+dlAlerts()+payAlerts()+taskAlerts()+S.projects.filter(function(p){if(!p.date)return false;var n=dleft(p.date),w=p.warn==null?3:+p.warn;return w>0&&n>=0&&n<=w}).sort(function(a,b){return a.date.localeCompare(b.date)}).map(function(p){return '<div class="banner alert" onclick="goto(\''+p.date+'\');setTab(\'cal\')">Съёмка '+when(dleft(p.date))+': '+esc(p.names||'Проект')+'<small>'+fd(p.date)+' · '+esc(p.type||'Съёмка')+(p.place?' · '+esc(p.place):'')+'</small></div>'}).join('')}
+function alerts(){return bkAlert()+dlAlerts()+payAlerts()+taskAlerts()+S.projects.filter(function(p){if(!p.date)return false;var n=dleft(p.date),w=p.warn==null?3:+p.warn;return w>0&&n>=0&&n<=w}).sort(function(a,b){return a.date.localeCompare(b.date)}).map(function(p){return '<div class="banner alert" onclick="goto(\''+p.date+'\');setTab(\'cal\')">Съёмка '+when(dleft(p.date))+': '+esc(p.names||'Проект')+'<small>'+fd(p.date)+' · '+esc(p.type||'Съёмка')+(p.place?' · '+esc(placeTxt(p)):'')+'</small></div>'}).join('')}
 function ymd(s){return s.split('-').join('')}
 function nextD(s){var a=s.split('-'),d=new Date(+a[0],+a[1]-1,+a[2]+1);return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
 var BS=String.fromCharCode(92),NL=String.fromCharCode(10);
@@ -1892,6 +1893,18 @@ function icsSend(list,name){if(!list.length){toast('Нет проектов с �
   document.addEventListener('visibilitychange',onH);
   setTimeout(function(){document.removeEventListener('visibilitychange',onH);if(!left)toast('Календарь не открылся?','Файл',function(){hideToast();deliverFile(file,'Календарь EventLab')})},1800);
   location.href=isStandalone()?url.replace(/^https:\/\//,'x-safari-https://'):url}
+function placeUrl(p){var m=String(p.place||'').match(/https?:\/\/[^\s]+/i);return m?m[0]:''}
+function placeTxt(p){var t=String(p.place||'').replace(/https?:\/\/[^\s]+/ig,'').replace(/\s+/g,' ').trim();return t||(placeUrl(p)?'Ссылка на карту':'')}
+function navLink(p){var u=placeUrl(p),t=placeTxt(p);
+  if(u){var d=u;try{d=decodeURIComponent(u)}catch(e){}var c=d.match(/[?&](?:rtext=[^&]*~|pt=|ll=|whatshere\[point\]=)(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(c&&/yandex|ya\.ru/i.test(u)){var a=+c[1],b=+c[2],isR=/rtext=/.test(d);return {app:'yandexnavi://build_route_on_map?lat_to='+(isR?a:b)+'&lon_to='+(isR?b:a),web:u}}
+    return {app:'',web:u}}
+  return {app:'yandexnavi://map_search?text='+encodeURIComponent(t),web:'https://yandex.ru/maps/?text='+encodeURIComponent(t)}}
+function navOpen(id){var p=S.projects.find(function(x){return x.id===id});if(!p||!p.place)return;var L=navLink(p);
+  if(!L.app){location.href=L.web;return}
+  var left=false,h=function(){if(document.visibilityState==='hidden')left=true};document.addEventListener('visibilitychange',h);
+  setTimeout(function(){document.removeEventListener('visibilitychange',h);if(!left)location.href=L.web},1400);location.href=L.app}
+function placeCell(p){if(!p.place)return '—';return '<span>'+esc(placeTxt(p))+'<button class="btn s navb" onclick="navOpen(\''+p.id+'\')">В навигатор</button></span>'}
 function calAsk(id,edit){var m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
   m.innerHTML='<div class="pwb"></div><div class="pwc card"><b>Добавить в календарь iPhone?</b><div class="mut" style="margin-top:6px">'+(edit?'Проект изменился. Если в календаре появится дубль, удали старое событие.':'Откроется окно календаря, там нажми «Добавить все».')+'</div><div class="ract" style="margin-top:14px"><button class="btn s" id="cala0">Не сейчас</button><button class="btn" id="cala1">Добавить</button></div></div>';
   m.className='show';var close=function(){m.className='';m.innerHTML=''};m.querySelector('.pwb').onclick=close;document.getElementById('cala0').onclick=close;document.getElementById('cala1').onclick=function(){close();hideToast();icsOne(id)}}
@@ -1913,7 +1926,7 @@ function vWeek(){
   var sh=S.projects.filter(function(p){return p.date===ds}),dl=S.projects.filter(function(p){return p.deadline===ds&&!isFinSt(p.status)}),nt=S.notes.filter(function(n){return n.date===ds});
   cnt+=sh.length;sh.forEach(function(p){sum+=+p.amount||0});
   h+='<div class="card wk'+(i===0?' today':'')+'"><div class="wh"><b>'+(i===0?'Сегодня':i===1?'Завтра':wd)+'</b><span class="mut">'+fd(ds)+(i>1?'':' · '+wd.toLowerCase())+'</span></div>';
-  sh.forEach(function(p){var r=(+p.amount||0)-(+p.paid||0);h+='<div class="wi" style="--c:'+tc(p.type)+'" onclick="openP(\''+p.id+'\')"><i></i><div><b>'+esc(p.names||'Проект')+'</b><div class="mut">'+esc(p.type||'Съёмка')+(p.place?' · '+esc(p.place):'')+'</div><div class="mut">'+money(p.amount)+(r>0?' · <span class="bad">остаток '+money(r)+'</span>':' · <span class="ok">оплачено</span>')+'</div></div></div>'});
+  sh.forEach(function(p){var r=(+p.amount||0)-(+p.paid||0);h+='<div class="wi" style="--c:'+tc(p.type)+'" onclick="openP(\''+p.id+'\')"><i></i><div><b>'+esc(p.names||'Проект')+'</b><div class="mut">'+esc(p.type||'Съёмка')+(p.place?' · '+esc(placeTxt(p)):'')+'</div><div class="mut">'+money(p.amount)+(r>0?' · <span class="bad">остаток '+money(r)+'</span>':' · <span class="ok">оплачено</span>')+'</div></div></div>'});
   dl.forEach(function(p){h+='<div class="wi" style="--c:var(--ac)" onclick="openP(\''+p.id+'\')"><i></i><div><b>Сдача монтажа: '+esc(p.names||'Проект')+'</b><div class="mut">монтажи '+(+p.editsDone||0)+'/'+(+p.editsTotal||0)+'</div></div></div>'});
   if(nt.length)h+='<div class="wi" style="--c:var(--mut)" onclick="goto(\''+ds+'\');calView=\'month\';render()"><i></i><div class="mut">Заметок: '+nt.length+'</div></div>';
   if(!sh.length&&!dl.length&&!nt.length)h+='<div class="free">Свободный день</div>';
@@ -1937,7 +1950,7 @@ function vCal(){
  P.forEach(function(p){var r=(+p.amount||0)-(+p.paid||0);
   h+='<div class="card tapc" onclick="if(!event.target.closest(\'a,button\'))openP(\''+p.id+'\')"><div class="row"><b>'+esc(p.names||'Без названия')+'</b><span class="go">›</span></div>'
   +'<div style="margin:4px 0">'+chipT(p)+' <span class="chip st">'+esc(p.status||'Заявка')+'</span></div>'
-  +'<div class="mut"><span class="k">Место</span>'+esc(p.place||'—')+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
+  +'<div class="mut"><span class="k">Место</span>'+placeCell(p)+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
   +'<div class="row" style="margin-top:6px"><span>Бюджет: '+money(p.amount)+'</span><span class="'+(r>0?'bad':'ok')+'">'+(r>0?'остаток '+money(r):'оплачено')+'</span></div>'
   +'<div class="mut">'+(roleOf(p)==='band'?(p.sc?'Саундчек '+esc(p.sc)+' · ':'')+'состав '+bln(p).c+' · песен '+songN(p):roleOf(p)==='decor'?(p.mT?'Монтаж с '+esc(p.mT)+' · ':'')+(dmat(p).n?'купить: '+dmat(p).n:'материалы '+dmat(p).c):roleOf(p)==='dj'?'Треки: '+musN(p)[0]+'/'+musN(p)[1]:roleOf(p)==='venue'?((S.halls||[]).filter(function(x){return x.id===p.hall}).map(function(x){return 'Зал: '+esc(x.name)})[0]||'Зал не выбран')+(p.guests?' · гостей: '+p.guests:'')+(hallConf(p).length?' · ⚠ накладка':''):roleOf(p)==='host'?'Отправлено: '+sentN(p)+'/'+(p.sends||[]).length:roleOf(p)==='org'?'Подрядчики: '+vok(p)+'/'+(p.vendors||[]).length+' подтверждены':'Монтажи: '+(+p.editsDone||0)+'/'+(+p.editsTotal||0))+'</div>'
   +(p.extra?'<div class="mut"><span class="k">Детали</span>'+esc(p.extra)+'</div>':'')+calBtns(p)+'</div>';});
@@ -1995,7 +2008,7 @@ function vProjects(){
      +'<div class="card swc pcard'+(p.id===justSaved?' saved':'')+(past?' past':'')+'" style="--c:'+tc(p.type)+'" onclick="openP(\''+p.id+'\')">'
      +'<div class="pdt">'+(dd?'<b>'+(+dd[2])+'</b><span>'+wd+'</span>':'<b>—</b>')+'</div>'
      +'<div class="pmain"><div class="pnm">'+esc(p.names||'Без названия')+'</div>'
-     +'<div class="pmeta"><i></i>'+esc(p.type||'Съёмка')+(p.place?' · '+esc(p.place):'')+'</div>'
+     +'<div class="pmeta"><i></i>'+esc(p.type||'Съёмка')+(p.place?' · '+esc(placeTxt(p)):'')+'</div>'
      +'<div class="ptags"><span class="pst">'+esc(p.status||'Заявка')+'</span>'+(et?'<span class="ped'+(ed>=et?' done':'')+'">монтаж '+ed+'/'+et+'</span>':'')+(p.deadline&&ed<et&&!isFinSt(p.status)?'<span class="ped'+(dleft(p.deadline)<0?' late':'')+'">сдача '+fd(p.deadline).slice(0,5)+'</span>':'')+'</div></div>'
      +'<div class="psum"><b>'+money(p.amount)+'</b><span class="'+(rest>0?'bad':'ok')+'">'+(rest>0?'−'+money(rest):'✓ оплачено')+'</span></div>'
      +'<div class="pbar"><i style="width:'+pc+'%"></i></div></div></div>';
@@ -2014,7 +2027,7 @@ function vDetail(p){
   var late=p.deadline&&!isFinSt(p.status)&&dleft(p.deadline)<0;
   h+='<div class="card"><div class="row"><b>'+esc(p.names||'Без названия')+'</b><span class="mut">'+fd(p.date)+'</span></div>'
    +'<div style="margin:6px 0 8px">'+chipT(p)+' <span class="chip st">'+esc(p.status||'Заявка')+'</span></div>'
-   +'<div class="mut"><span class="k">Место</span>'+esc(p.place||'—')+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
+   +'<div class="mut"><span class="k">Место</span>'+placeCell(p)+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
    +'<div class="mut"><span class="k">'+RP(p).dlK+'</span>'+(p.deadline?'<span class="'+(late?'bad':'')+'">'+fd(p.deadline)+(!isFinSt(p.status)?' · '+(late?'просрочено на '+(-dleft(p.deadline))+' дн.':when(dleft(p.deadline))):'')+'</span>':'—')+'</div>'
    +(p.pack?'<div class="mut"><span class="k">Пакет</span>'+esc(p.pack)+'</div>':'')+(p.phone?'<div class="mut"><span class="k">Телефон</span>'+esc(p.phone)+'</div>':'')+(p.tg?'<div class="mut"><span class="k">Telegram</span>'+esc(p.tg)+'</div>':'')
    +(p.extra?'<div class="mut" style="white-space:pre-wrap"><span class="k">Детали</span>'+esc(p.extra)+'</div>':'');
@@ -2710,7 +2723,7 @@ function vBand(){var t0=today();var L=S.projects.filter(function(p){return roleO
   var owe=L.filter(function(p){return p.date&&p.date<=t0&&bln(p).n});
   if(owe.length)h+='<div class="card"><div class="sec">Выплаты после выступлений<small>'+owe.length+'</small></div>'+owe.map(function(p){var d=bln(p);return '<div class="pay" style="cursor:pointer" onclick="secO.band=true;openP(\''+p.id+'\')"><div><div style="font-weight:600">'+esc(p.names||'Выступление')+'</div><div class="mut">'+fd(p.date)+' · не выплачено: '+d.n+'</div></div><b class="bad">'+money(d.t-d.pd)+'</b></div>'}).join('')+'</div>';
   var F=L.filter(function(p){return !p.date||p.date>=t0});
-  F.forEach(function(p){var d=bln(p),sn=songN(p);h+='<div class="card" style="cursor:pointer" onclick="secO.band=true;openP(\''+p.id+'\')"><div class="row"><div style="min-width:0"><b>'+esc(p.names||'Выступление')+'</b><div class="mut">'+(p.date?fd(p.date)+' · '+when(dleft(p.date)):'без даты')+(p.place?' · '+esc(p.place):'')+'</div></div><span class="chip'+(sn?' st':'')+'">'+sn+' песен</span></div>'
+  F.forEach(function(p){var d=bln(p),sn=songN(p);h+='<div class="card" style="cursor:pointer" onclick="secO.band=true;openP(\''+p.id+'\')"><div class="row"><div style="min-width:0"><b>'+esc(p.names||'Выступление')+'</b><div class="mut">'+(p.date?fd(p.date)+' · '+when(dleft(p.date)):'без даты')+(p.place?' · '+esc(placeTxt(p)):'')+'</div></div><span class="chip'+(sn?' st':'')+'">'+sn+' песен</span></div>'
     +'<div class="mut" style="margin-top:8px">'+(d.c?'Состав: '+p.line.map(function(x){return esc(x.n)}).join(', '):'Состав не собран')+'</div>'
     +'<div class="mut">'+[p.load?'заезд '+esc(p.load):'',p.sc?'саундчек '+esc(p.sc):'',p.gig?'начало '+esc(p.gig):''].filter(Boolean).join(' · ')+'</div></div>'});
   if(!F.length&&!owe.length)h+='<div class="card mut">Добавь выступление, и здесь появятся состав, сет-листы и выплаты.</div>';
@@ -2755,7 +2768,7 @@ function vDecor(){var t0=today();var L=S.projects.filter(function(p){return role
   var tb=0;L.forEach(function(p){tb+=dmat(p).b});
   if(tb)h+='<div class="card"><div class="row"><span class="mut">Осталось закупить по всем мероприятиям</span><b class="bad" style="white-space:nowrap">'+money(tb)+'</b></div></div>';
   return h+L.map(function(p){var d=dmat(p),need=(p.mats||[]).filter(function(x){return !x.got});
-    return '<div class="card" style="cursor:pointer" onclick="secO.dec=true;openP(\''+p.id+'\')"><div class="row"><div style="min-width:0"><b>'+esc(p.names||'Мероприятие')+'</b><div class="mut">'+(p.date?fd(p.date)+' · '+when(dleft(p.date)):'без даты')+(p.place?' · '+esc(p.place):'')+'</div></div><span class="chip'+(d.c&&!d.n?' st':'')+'">'+(d.c?(d.c-d.n)+'/'+d.c:'—')+'</span></div>'
+    return '<div class="card" style="cursor:pointer" onclick="secO.dec=true;openP(\''+p.id+'\')"><div class="row"><div style="min-width:0"><b>'+esc(p.names||'Мероприятие')+'</b><div class="mut">'+(p.date?fd(p.date)+' · '+when(dleft(p.date)):'без даты')+(p.place?' · '+esc(placeTxt(p)):'')+'</div></div><span class="chip'+(d.c&&!d.n?' st':'')+'">'+(d.c?(d.c-d.n)+'/'+d.c:'—')+'</span></div>'
      +'<div class="mut" style="margin-top:8px">'+(p.mT||p.dmT?'Монтаж'+(p.mT?' с '+esc(p.mT):'')+(p.dmT?' · демонтаж до '+esc(p.dmT):''):'Время монтажа не указано')+'</div>'
      +(need.length?'<div class="mut">Купить: '+need.slice(0,4).map(function(x){return esc(x.n)}).join(', ')+(need.length>4?'…':'')+' · '+money(d.b)+'</div>':(d.c?'<div class="ok" style="font-size:13px">Всё закуплено ✓</div>':''))+'</div>'}).join('')}
 
