@@ -16,6 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+.tmpv{max-height:88vh;overflow-y:auto}
+.tmpv img{display:block;width:100%;height:auto;border-radius:10px}
 .navb{display:flex;width:fit-content;margin-top:6px;padding:7px 14px;min-height:0}
 .icsb{margin:0 0 12px;width:100%}
 html.stage{padding:0!important;height:var(--sh);overflow:hidden}
@@ -1796,7 +1798,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · навигатор';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · красивый тайминг';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -2136,7 +2138,33 @@ function addTm(id){var t=v('tm_t'),n=v('tm_n').trim();if(!n)return;P(id).timing.
 function delTm(id,tid){var p=P(id);p.timing=p.timing.filter(function(x){return x.id!==tid});save();render()}
 function tplTm(id){var p=P(id);p.timing=(TPLT[p.type]||TPLT['Свадьба']).map(function(x){return {id:uid(),t:x[0],n:x[1]}});save();render()}
 function clrTm(id){if(armed!=='tm'+id){armed='tm'+id;render();return}armed=null;P(id).timing=[];save();render()}
-function shareTm(id){var p=P(id),tm=p.timing.slice().sort(function(a,b){return (a.t||'').localeCompare(b.t||'')});var t='Тайминг '+(p.names||'съёмки')+(p.date?' · '+fd(p.date):'')+'\n\n'+tm.map(function(x){return (x.t||'—')+'  '+x.n}).join('\n');shareText(t)}
+function tmSorted(p){return (p.timing||[]).slice().sort(function(a,b){return (a.t||'').localeCompare(b.t||'')})}
+function tmPlain(p){return 'Тайминг '+(p.names||'съёмки')+(p.date?' · '+fd(p.date):'')+'\n\n'+tmSorted(p).map(function(x){return (x.t||'—')+'  '+x.n}).join('\n')}
+function tmWrap(c,t,w){var out=[],L='';String(t||'').split(/\s+/).forEach(function(x){var n=L?L+' '+x:x;if(c.measureText(n).width>w&&L){out.push(L);L=x}else L=n});if(L)out.push(L);return out.length?out:['']}
+function tmDraw(p,logo){var cs=getComputedStyle(document.documentElement),V=function(k,d){return (cs.getPropertyValue(k)||'').trim()||d},bg=V('--bg','#111'),tx=V('--tx','#eee'),mut=V('--mut','#999'),ac=V('--ac','#c33'),hero=V('--hero','')||ac,htx=V('--heroTx','')||'#fff';
+  var lum=function(h){h=String(h||'').replace('#','');if(h.length===3)h=h.replace(/./g,'$&$&');if(!/^[0-9a-f]{6}/i.test(h))return -1;var f=function(i){var v=parseInt(h.substr(i,2),16)/255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};return .2126*f(0)+.7152*f(2)+.0722*f(4)},cr=function(a,b){var x=lum(a),y=lum(b);if(x<0||y<0)return 99;return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+  if(!hero||hero==='transparent'||!/^#/.test(hero))hero=/^#/.test(ac)?ac:'#222222';
+  if(cr(htx,hero)<4.5)htx=lum(hero)>.3?'#15110F':'#FFF9EE';
+  if(cr(ac,bg)<3)ac=tx;
+  var fam=getComputedStyle(document.body).fontFamily||'sans-serif',W=1080,pad=72,cn=document.createElement('canvas'),c=cn.getContext('2d'),tm=tmSorted(p),F=function(wg,sz){return wg+' '+sz+'px '+fam};
+  c.font=F(700,76);var title=tmWrap(c,p.names||'Проект',W-pad*2);c.font=F(500,42);var rows=tm.map(function(x){return tmWrap(c,x.n||'',W-pad*2-250)});
+  var head=pad+96+56+title.length*88+(p.date?60:0)+(p.place?56:0)+56,body=rows.reduce(function(a,r){return a+Math.max(1,r.length)*56+44},0);
+  cn.width=W;cn.height=head+56+body+120;
+  c.fillStyle=bg;c.fillRect(0,0,W,cn.height);c.fillStyle=hero;c.fillRect(0,0,W,head);
+  var y=pad;if(logo){c.save();c.beginPath();c.roundRect?c.roundRect(pad,y,96,96,22):c.rect(pad,y,96,96);c.clip();c.drawImage(logo,pad,y,96,96);c.restore()}
+  c.fillStyle=htx;c.textBaseline='middle';c.font=F(700,42);c.fillText('EventLab',pad+(logo?120:0),y+48);c.textBaseline='alphabetic';
+  y+=96+56;c.font=F(700,76);title.forEach(function(l){y+=72;c.fillText(l,pad,y);y+=16});
+  c.font=F(500,42);c.globalAlpha=.85;if(p.date){y+=44;c.fillText(fdLong(p.date),pad,y)}if(p.place&&placeTxt(p)&&placeTxt(p)!=='Ссылка на карту'){y+=56;c.fillText(tmWrap(c,placeTxt(p),W-pad*2)[0],pad,y)}c.globalAlpha=1;
+  y=head+56;var lineX=pad+196,top=y,dots=[];
+  tm.forEach(function(x,i){var r=rows[i],h=Math.max(1,r.length)*56;dots.push(y+22);c.fillStyle=ac;c.font=F(700,44);c.fillText(x.t||'—',pad,y+38);c.fillStyle=tx;c.font=F(500,42);r.forEach(function(l,j){c.fillText(l,lineX+54,y+38+j*56)});y+=h+44});
+  if(dots.length){c.strokeStyle=mut;c.globalAlpha=.4;c.lineWidth=4;c.beginPath();c.moveTo(lineX,dots[0]);c.lineTo(lineX,dots[dots.length-1]);c.stroke();c.globalAlpha=1;dots.forEach(function(d){c.fillStyle=ac;c.beginPath();c.arc(lineX,d,13,0,6.3);c.fill()})}
+  c.fillStyle=mut;c.font=F(500,32);c.textAlign='center';c.fillText('Тайминг составлен в EventLab',W/2,cn.height-48);c.textAlign='left';return cn}
+function shareTm(id){var p=P(id),plain=tmPlain(p),show=function(logo){var cn;try{cn=tmDraw(p,logo)}catch(e){shareText(plain);return}
+    cn.toBlob(function(b){if(!b){shareText(plain);return}var file=new File([b],'EventLab-тайминг.png',{type:'image/png'}),u=URL.createObjectURL(b),m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
+      m.innerHTML='<div class="pwb"></div><div class="pwc card tmpv"><img src="'+u+'" alt="Картинка с таймингом"><div class="ract" style="margin-top:12px"><button class="btn s" id="tmx">Текстом</button><button class="btn" id="tmo">Отправить</button></div></div>';m.className='show';
+      var close=function(){m.className='';m.innerHTML='';URL.revokeObjectURL(u)};m.querySelector('.pwb').onclick=close;
+      document.getElementById('tmx').onclick=function(){close();shareText(plain)};document.getElementById('tmo').onclick=function(){deliverFile(file,'Тайминг',close)}},'image/png')};
+  var i=new Image();i.onload=function(){show(i)};i.onerror=function(){show(null)};i.src='icons/apple-touch-icon-v4.png'}
 function qz(id,i,val){var p=P(id);p.quiz[S.quizQ[i]]=val;save()}
 function saveQuizQ(){S.quizQ=v('qe').split('\n').map(function(x){return x.trim()}).filter(Boolean);quizEdit=false;save();render()}
 function shareQuiz(id){var p=P(id);var t=(p.names?p.names+', ':'')+'чтобы снять ваш день по-настоящему про вас, ответьте, пожалуйста, на несколько вопросов 🤍\n\n'+S.quizQ.map(function(q,i){return (i+1)+'. '+q}).join('\n');shareText(t)}
