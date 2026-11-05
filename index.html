@@ -16,6 +16,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Forum&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Great+Vibes&family=Bad+Script&display=swap" rel="stylesheet">
 <style id="th-common">
+#insm{position:fixed;inset:0;z-index:400;display:none;background:var(--bg,#111);overflow-y:auto}
+#insm.show{display:flex;align-items:center;justify-content:center}
+.insc{max-width:360px;width:100%;padding:calc(30px + env(safe-area-inset-top,0px)) 24px calc(110px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--tx)}
+.insc img{border-radius:20px;display:block;margin:0 auto 18px}
+.insc>b{display:block;font-size:26px;line-height:1.2;margin-bottom:8px}
+.insc>p{margin:0 0 18px;color:var(--mut);font-size:15px;line-height:1.45}
+.insl{text-align:left;margin:0 0 18px;padding:16px 16px 16px 36px;border-radius:16px;background:var(--soft,rgba(127,127,127,.1));border:1px solid var(--hair,var(--line));display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.4}
+#insm .insar{z-index:401}
 .ins{margin:14px 0 6px;padding:14px;border-radius:14px;background:var(--soft,rgba(127,127,127,.1));border:1px solid var(--hair,var(--line));text-align:left}
 .ins>b{display:block;font-size:16px;margin-bottom:8px}
 .ins ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px}
@@ -1808,7 +1816,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='5 ноября 2026 · установка по ссылке';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='5 ноября 2026 · окно установки';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -3281,7 +3289,16 @@ function isStandalone(){try{return navigator.standalone===true||matchMedia('(dis
 function parseShared(str,cb){var m=String(str||'').match(/#(pe?)=([A-Za-z0-9_\-]+)/);
   if(m){unzipStr(m[2]).then(function(t){var d=JSON.parse(t);withDecrypt(d,cb)}).catch(function(){toast('Ссылка повреждена или неполная','Ок',hideToast)});return true}
   try{var d=JSON.parse(str);if(d&&(d.kind==='project'||d.enc)){withDecrypt(d,cb);return true}}catch(e){}return false}
-var _bip=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_bip=e});
+var _bip=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_bip=e;insDraw()});
+function insMobile(){return isIOS()||/Android/i.test(navigator.userAgent)}
+function insSheet(){if(isStandalone()||!insMobile())return;try{if(sessionStorage.getItem('el_ins_skip'))return}catch(e){}var m=document.getElementById('insm');if(!m){m=document.createElement('div');m.id='insm';document.body.appendChild(m)}m.className='show';insDraw()}
+function insDraw(){var m=document.getElementById('insm');if(!m||m.className!=='show')return;var ios=isIOS();
+  m.innerHTML='<div class="insc"><img src="icons/apple-touch-icon-v4.png" alt="" width="88" height="88"><b>Установи EventLab</b><p>Приложение работает с экрана «Домой», как обычное, и без интернета.</p>'
+   +(ios?'<ol class="insl"><li>Внизу Safari нажми <b>'+(iosNewBar()?'•••, затем «Поделиться»':'«Поделиться»')+'</b></li><li>Выбери <b>«На экран Домой»</b> и нажми «Добавить»</li><li>Открывай EventLab с иконки: там твои проекты и сохраняются</li></ol>'
+        :(_bip?'<button class="btn full" id="insgo">Установить приложение</button>':'<ol class="insl"><li>Открой меню браузера <b>⋮</b></li><li>Выбери <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b></li></ol>'))
+   +'<button class="lkf" id="insno">Продолжить в браузере</button></div>'+(ios?'<div class="insar'+(iosNewBar()?' r':'')+'" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>':'');
+  document.getElementById('insno').onclick=function(){try{sessionStorage.setItem('el_ins_skip','1')}catch(e){}m.className='';m.innerHTML=''};
+  var g=document.getElementById('insgo');if(g)g.onclick=function(){var e=_bip;_bip=null;m.className='';m.innerHTML='';if(e)e.prompt()}}
 function iosNewBar(){var m=navigator.userAgent.match(/Version\/(\d+)/);return !!m&&+m[1]>=26}
 function impModal(d,raw){var x=d.p||{},m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
   var iosWeb=isIOS()&&!isStandalone();
@@ -3307,7 +3324,7 @@ function pasteProject(){
     document.getElementById('pwo').onclick=function(){var t=document.getElementById('pst').value;close();handle(t)};setTimeout(function(){document.getElementById('pst').focus()},50)};
   try{if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){if(t&&t.trim())handle(t);else manual()}).catch(manual);return}}catch(e){}
   manual()}
-if(!checkHashImport()){if(!S.roles)rolePick(true);else maybeTour()}
+if(!checkHashImport()){if(!S.roles)rolePick(true);else maybeTour();insSheet()}
 /* свайп между вкладками (телефон) */
 (function(){var TORD=['cal','projects','edits','budget','replies','services'],SUB={stats:1,notes:1,theme:1,backup:1,security:1,settings:1,role:1,contracts:1};
   var x0=0,y0=0,t0=0,ok=false,onSwp=false;
