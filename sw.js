@@ -1,6 +1,6 @@
 // EventLab — офлайн-режим. Страница берётся из сети (чтобы обновления приходили сразу),
 // а без интернета открывается сохранённая копия. Шрифты и иконки кешируются.
-const CACHE = 'shotlist-v6';
+const CACHE = 'shotlist-v7';
 const CORE = ['./', 'index.html', 'manifest-v2.webmanifest', 'icons/icon-192-v4.png', 'icons/icon-512-v4.png', 'icons/apple-touch-icon-v4.png'];
 
 self.addEventListener('install', e => {
@@ -14,6 +14,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (new URL(req.url).pathname.endsWith('/cal.html')) return; // страница календаря не должна подменять копию приложения
   const isPage = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
   if (isPage) {
     // сначала сеть, без сети — копия

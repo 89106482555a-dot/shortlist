@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>EventLab: в календарь</title>
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F2EBDD;color:#15110F;font:17px/1.45 -apple-system,'Helvetica Neue',Arial,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
+main{max-width:340px}
+h1{font-size:26px;font-weight:600;margin:0 0 8px}
+p{margin:0 0 20px;color:#5E5548}
+a.btn{display:block;padding:15px 20px;border-radius:99px;background:#C81E2E;color:#fff;font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<main>
+  <h1 id="t">Добавить в календарь</h1>
+  <p id="x">Нажми кнопку, затем «Добавить все».</p>
+  <a class="btn" id="go" href="#">Открыть календарь</a>
+</main>
+<script>
+(function(){
+  var go=document.getElementById('go'),raw=location.hash.slice(1),text='';
+  try{var b=raw.replace(/-/g,'+').replace(/_/g,'/');text=decodeURIComponent(escape(atob(b)))}catch(e){}
+  if(text.indexOf('BEGIN:VCALENDAR')!==0){
+    document.getElementById('t').textContent='Не удалось открыть календарь';
+    document.getElementById('x').textContent='Вернись в EventLab и нажми кнопку календаря ещё раз.';
+    go.style.display='none';return}
+  var n=(text.match(/BEGIN:VEVENT/g)||[]).length;
+  document.getElementById('t').textContent=n===1?'Добавить проект в календарь':'Добавить проекты в календарь: '+n;
+  go.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(text);
+  setTimeout(function(){location.href=go.href},150);
+})();
+</script>
+</body>
+</html>
