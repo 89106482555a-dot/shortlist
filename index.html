@@ -264,6 +264,14 @@ button,a,label,.swc,.day{touch-action:manipulation;-webkit-tap-highlight-color:t
 .autos.saveFail{color:var(--bad);font-weight:600}
 .chkb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 10px}
 .chksw{margin-left:auto;display:flex}
+/* каталог материалов */
+.catl{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.catr{display:flex;align-items:center;gap:10px;margin:0;padding:8px 0;border-bottom:1px solid var(--hair,var(--line));font:inherit;letter-spacing:0;text-transform:none;color:var(--tx);cursor:pointer}
+.catr>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.catr small{display:block;margin-top:2px;font-size:12px;color:var(--mut)}
+.catr b{flex:none;font-size:13px}
+.catr input[type=checkbox],#sheet .catr input[type=checkbox]{flex:none;width:20px;height:20px;min-height:0;margin:0;padding:0;accent-color:var(--ac)}
+.catr .catq,#sheet .catr .catq{flex:0 0 64px;width:64px;margin:0;padding:6px 8px;min-height:36px;text-align:center}
 /* iOS: у поля времени своя большая ширина, без этого оно вылезает за край, как и поле даты */
 input[type=time]{box-sizing:border-box;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;min-height:44px}
 input[type=time]::-webkit-date-and-time-value{min-width:0;text-align:left}
@@ -1929,7 +1937,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='8 ноября 2026 · правка деталей, заметки';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='8 ноября 2026 · каталог декоратора';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false,localAt=0;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true;localAt=+S.savedAt||0}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1985,7 +1993,7 @@ function render(){
   var _hs='<div><b>'+S.projects.length+'</b>всего</div><div><b>'+_done+'</b>завершено</div><div><b>'+up+'</b>впереди</div><div class="hsm"><b>'+moneyShort(_sum)+'</b>заработано, '+S.cur+'</div>';document.querySelectorAll('[data-hs]').forEach(function(e){e.innerHTML=_hs});
   var SV=function(p){return '<svg viewBox="0 0 24 24">'+p+'</svg>'};
   var T=[['cal',SV('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),'Календарь'],['projects',SV('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5 14.6 12M20.5 12 12 14.6M12 20.5 9.4 12M3.5 12 12 9.4"/>'),'Проекты'],['budget',SV('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M15.5 15h2.5"/>'),'Бюджет'],['edits',SV('<path d="M4 7h16M4 12h10M4 17h13"/><circle cx="17" cy="12" r="1.2"/>'),'Монтажи'],['sends',SV('<path d="M20.5 3.5 3.5 10.5l6.5 2.5 2.5 6.5z"/><path d="m10 13 4-4"/>'),'Отправка'],['vendors',SV('<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><circle cx="16.5" cy="9.5" r="2.6"/><path d="M15.8 14.6c2.4-.2 4.3 1.4 4.7 4.4"/>'),'Подрядчики'],['halls',SV('<path d="M3.5 20.5h17M5 20.5V9.5L12 4l7 5.5v11"/><path d="M9.5 20.5v-6h5v6"/>'),'Залы'],['music',SV('<path d="M9 18V5.5l11-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'),'Музыка'],['decor',SV('<path d="M12 20.5c-4-2.5-7.5-6-7.5-10a4 4 0 0 1 7.5-2 4 4 0 0 1 7.5 2c0 4-3.5 7.5-7.5 10z"/>'),'Декор'],['band',SV('<path d="M14.5 4.5 19.5 9.5M17 7l-7.5 7.5"/><path d="M9.5 14.5c1.4 1.4 1.2 3.9-.6 5.4-1.6 1.4-4.2 1.3-5.6-.3-1.5-1.6-1.2-4.2.5-5.5 1.6-1.3 3.7-1.6 5.7.4z"/>'),'Группа'],['stats',SV('<path d="M5 20v-8M11 20V5M17 20v-5M3 20.5h18"/>'),'Статистика'],['notes',SV('<path d="M6.5 3.5h8l4 4v13h-12z"/><path d="M14.5 3.5v4h4M9.5 12.5h5M9.5 16h5"/>'),'Заметки'],['replies',SV('<path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8 9.5h8M8 12.5h5"/>'),'Ответы']];
-  var SUBT={services:1,stats:1,notes:1,theme:1,backup:1,security:1,settings:1,role:1,contracts:1},_on=TABN[tab]?'projects':tab;
+  var SUBT={services:1,stats:1,notes:1,theme:1,backup:1,security:1,settings:1,role:1,contracts:1,matcat:1},_on=TABN[tab]?'projects':tab;
   var _item=function(t){return '<button class="'+(_on===t[0]?'on':'')+'" onclick="setTab(\''+t[0]+'\')"><span class="ic">'+t[1]+'</span><span class="lb">'+t[2]+'</span>'+(t[0]==='projects'&&tl>0?'<em class="bd">'+tl+'</em>':'')+'</button>'};
   T=['cal','projects','budget','replies'].map(function(k){return T.filter(function(t){return t[0]===k})[0]});
   document.getElementById('tabs').innerHTML='<div class="mark">'+RPROF[S.role||'video'].abbr+'<span>'+RPROF[S.role||'video'].brand+'Lab</span></div>'+T.slice(0,2).map(_item).join('')
@@ -1994,7 +2002,7 @@ function render(){
    +'<button class="thb'+(SUBT[tab]?' on':'')+'" onclick="setTab(\'services\')"><span class="ic">'+SV('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>')+'</span><span class="lb">Сервисы</span></button>';
   var _av=document.getElementById('avb');if(_av)_av.style.display=tab==='cal'?'':'none';
   document.body.setAttribute('data-open',tab==='projects'&&openId&&!showForm&&P(openId)?'1':'');
-  var f={services:vServices,settings:vSettings,theme:vTheme,backup:vBackup,security:vSecurity,cal:vCal,replies:vReplies,stats:vStats,projects:vProjects,budget:vBudget,edits:vEdits,notes:vNotes,sends:vSends,vendors:vVendors,halls:vHalls,music:vMusic,decor:vDecor,band:vBand,role:vRole,contracts:vContracts}[tab]||vCal;
+  var f={services:vServices,settings:vSettings,theme:vTheme,backup:vBackup,security:vSecurity,cal:vCal,replies:vReplies,stats:vStats,projects:vProjects,budget:vBudget,edits:vEdits,notes:vNotes,sends:vSends,vendors:vVendors,halls:vHalls,music:vMusic,decor:vDecor,band:vBand,role:vRole,contracts:vContracts,matcat:vMatCat}[tab]||vCal;
   document.getElementById('data').innerHTML='';
   var _vh=f();if(TABN[tab])_vh=ptSw()+_vh.replace(/^<div class="row" style="margin-bottom:10px"><div class="date" style="margin:0">[^<]*<\/div><\/div>/,'');
   document.getElementById('view').innerHTML=wordFix(_vh);viewFx();dTabsFix();document.getElementById('banner').innerHTML=wordFix(document.getElementById('banner').innerHTML);
@@ -2009,10 +2017,12 @@ var addMode='';
 function openAdd(m){addMode=m||'';var sh=document.getElementById('sheet');if(!sh){sh=document.createElement('div');sh.id='sheet';document.body.appendChild(sh)}
   var wasOpen=sh.classList.contains('show');sh.innerHTML='<div class="shb" onclick="closeAdd()"></div><div class="shc"><div class="shg"></div>'+wordFix(addHtml())+'</div>';
   if(addMode==='status')sh.className='show';else if(addMode)sh.className='show frm';else if(wasOpen)sh.className='show';else{sh.className='';void sh.offsetWidth;sh.className='show'}
-  if(addMode&&addMode!=='status'){var f=sh.querySelector('textarea,input[type=number],input[type=url]');if(f)setTimeout(function(){f.focus()},60)}}
+  if(addMode&&addMode!=='status'&&addMode!=='cat'&&addMode!=='catItem'){var f=sh.querySelector('textarea,input[type=number],input[type=url]');if(f)setTimeout(function(){f.focus()},60)}}
 function closeAdd(){var sh=document.getElementById('sheet');addMode='';if(!sh)return;sh.className='';setTimeout(function(){if(!sh.classList.contains('show'))sh.innerHTML=''},320)}
 function addHtml(){var I=function(x){return '<span class="ic"><svg viewBox="0 0 24 24">'+x+'</svg></span>'},R=function(on,ic,t){return '<button class="shi" onclick="'+on+'">'+I(ic)+'<span>'+t+'</span></button>'};
   if(addMode==='status'){var sp=P(openId)||{},cur=sp.status||'Заявка';return '<div class="shh">Статус проекта</div>'+statList(sp).map(function(x,i){return R('statSet('+i+')',x===cur?'<path d="m5 12.5 4.5 4.5L19 7.5"/>':'<circle cx="12" cy="12" r="7.5"/>',esc(x))}).join('')}
+  if(addMode==='cat')return catPickHtml();
+  if(addMode==='catItem'){var ci=(S.matCat||[]).filter(function(x){return x.id===catEditId})[0]||{};return '<div class="shh">Пункт каталога</div><label>Название</label><input id="ce_n" value="'+esc(ci.n||'')+'"><div class="g2"><div><label>Цена</label><input id="ce_p" type="number" inputmode="decimal" value="'+esc(ci.pr||'')+'"></div><div><label>Раздел</label><input id="ce_s" value="'+esc(ci.sec||'')+'"></div></div><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="catEditSave()">Сохранить</button></div>'}
   if(addMode==='det'){var dp=P(openId)||{};return '<div class="shh">Детали проекта</div><label>Место</label><input id="ad_pl" placeholder="Адрес или ссылка на карту" value="'+esc(dp.place||'')+'"><label>Организаторы</label><input id="ad_o" value="'+esc(dp.org||'')+'"><div class="g2"><div><label>Телефон</label><input id="ad_ph" type="tel" placeholder="+7 900 000-00-00" value="'+esc(dp.phone||'')+'"></div><div><label>Telegram</label><input id="ad_tg" placeholder="@username" autocapitalize="off" autocorrect="off" value="'+esc(dp.tg||'')+'"></div></div><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="detSave()">Сохранить</button></div>'}
   if(addMode==='tm'){var ti=tmItem()||{};return '<div class="shh">Пункт тайминга</div><label>Время</label><input id="ad_tt" type="time" value="'+esc(ti.t||'')+'"><label>Что происходит</label><input id="ad_tn" value="'+esc(ti.n||'')+'"><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="tmSave()">Сохранить</button></div>'}
   if(addMode==='chat'){var cp=P(openId)||{};return '<div class="shh">Чат команды</div><div class="mut" style="margin-bottom:8px">Вставь ссылку на чат: ВК, Telegram, Instagram, Max, WhatsApp или другой. Кнопка в карточке будет открывать его.</div><label>Ссылка</label><input id="ad_c" type="url" inputmode="url" autocapitalize="off" autocorrect="off" placeholder="https://" value="'+esc(cp.chat||'')+'"><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="chatSave()">Сохранить</button></div>'}
@@ -3069,15 +3079,100 @@ function decSec(p,sh){var d=dmat(p),q='\''+p.id+'\'',R=String(p.refs||'').split(
     h+='<label>Референсы · ссылка в строке</label><textarea rows="2" placeholder="Pinterest, Instagram, фото" onchange="setPV('+q+',\'refs\',this.value)">'+esc(p.refs||'')+'</textarea>';
     if(R.length)h+='<div class="contacts" style="margin:-4px 0 10px">'+R.map(function(x,i){return /^https?:\/\//.test(x)?'<a class="btn s" target="_blank" rel="noopener" href="'+esc(x)+'">Референс '+(i+1)+'</a>':'<span class="chip">'+esc(x)+'</span>'}).join('')+'</div>';
     h+='<div class="g2"><div><label>Монтаж с</label><input type="time" value="'+esc(p.mT||'')+'" onchange="setPV('+q+',\'mT\',this.value)"></div><div><label>Демонтаж до</label><input type="time" value="'+esc(p.dmT||'')+'" onchange="setPV('+q+',\'dmT\',this.value)"></div></div>';
-    h+='<div class="ntg">Материалы и закупка</div>';
+    h+='<div class="ntg">Материалы и закупка</div><button class="btn s full" style="margin-bottom:8px" onclick="openAdd(\'cat\')">Выбрать из каталога</button>';
     h+=chkBar(p,'mats',false);(p.mats||[]).forEach(function(x){var s=(+x.q||1)*(+x.pr||0);h+='<button class="ck'+(x.got?' on':'')+'" onclick="tgMat('+q+',\''+x.id+'\')"><i>'+(x.got?'✓':'')+'</i><span>'+esc(x.n)+((+x.q||1)>1?' × '+x.q:'')+'<small class="due">'+(s?money(s):'без цены')+(x.got?' · куплено':' · купить')+'</small></span><em onclick="event.stopPropagation();delMat('+q+',\''+x.id+'\')">✕</em></button>'});
     h+='<div class="addl"><input id="mn_'+p.id+'" placeholder="Цветы, ткань, свечи"><input id="mq_'+p.id+'" type="number" placeholder="шт" style="flex:0 0 58px"><input id="mp_'+p.id+'" type="number" placeholder="₽ за шт" style="flex:0 0 92px"><button class="btn" onclick="addMat('+q+')">+</button></div>';
     if(d.c)h+='<div class="nt" style="margin-top:8px"><span>Материалы всего</span><b>'+money(d.t)+'</b></div><div class="nt"><span>Осталось купить</span><b class="'+(d.b?'bad':'ok')+'">'+money(d.b)+'</b></div>'
       +'<div class="ract"><button class="btn s" onclick="matExp('+q+')">'+(hasE?'Обновить в расходах':'Внести в расходы')+'</button><button class="btn" onclick="shareText(decText(P('+q+')))">Смета клиенту</button></div>';
   } else h+='<div class="mut" style="margin-top:6px">'+([p.palette?esc(p.palette):'',p.mT?'монтаж с '+esc(p.mT):'',d.n?'купить: '+d.n+' на '+money(d.b):''].filter(Boolean).join(' · ')||'Палитра, референсы, материалы и время монтажа')+'</div>';
   return h+'</div>'}
+/* ===== Каталог материалов декоратора: загрузка сметы из Excel или вставленной таблицы ===== */
+var catImp=null,catBack=null,catEditId='',CAT_MAX_FILE=2e7,CAT_MAX_XML=6e7,CAT_MAX_ROWS=5000,CAT_PREVIEW=300,CAT_MAX_NAME=200,CAT_HEAD_ROWS=15,CAT_PRICE_MIN=10;
+function catPrice(x){if(typeof x==='number')return x>0?x:0;var t=String(x==null?'':x).replace(/[\s ₽]/g,'').replace(/руб\.?|р\.$/i,'').replace(',','.');return /^\d+(\.\d+)?$/.test(t)?+t:0}
+function catIsNum(x){return typeof x==='number'||catPrice(x)>0}
+function colLetter(i){var t='';i++;while(i>0){var m=(i-1)%26;t=String.fromCharCode(65+m)+t;i=(i-m-1)/26}return t}
+/* Какая колонка название, какая цена: сначала по заголовкам, потом по содержимому. Ошибку поправит человек в предпросмотре */
+function catDetect(rows){var nc=-1,pc=-1,hdr=-1,i;
+  for(i=0;i<Math.min(rows.length,CAT_HEAD_ROWS)&&hdr<0;i++){var a=-1,b=-1;rows[i].forEach(function(c,j){var t=String(c==null?'':c).toLowerCase();if(a<0&&/наимен|назван|позиц|товар|материал|предмет|услуг/.test(t))a=j;if(b<0&&/цена|стоим|руб|₽|за ?ед|за ?шт/.test(t)&&!/итог|сумм|всего/.test(t))b=j});if(a>=0&&b>=0){nc=a;pc=b;hdr=i}}
+  if(hdr>=0)return {nc:nc,pc:pc,hdr:hdr};
+  var w=rows.reduce(function(m,r){return Math.max(m,r.length)},0),txt=[],nums=[];
+  for(i=0;i<w;i++){txt[i]=0;nums[i]=[]}
+  rows.forEach(function(r){r.forEach(function(c,j){if(c===''||c==null)return;if(catIsNum(c))nums[j].push(catPrice(c));else if(/[a-zа-яё]/i.test(String(c)))txt[j]++})});
+  for(i=0;i<w;i++)if(nc<0||txt[i]>txt[nc])nc=i;
+  for(i=0;i<w;i++){if(i===nc||!nums[i].length)continue;var sorted=nums[i].slice().sort(function(x,y){return x-y});if(sorted[sorted.length>>1]>=CAT_PRICE_MIN){pc=i;break}if(pc<0)pc=i}
+  return {nc:Math.max(nc,0),pc:pc,hdr:-1}}
+function catSheet(name,rows){var d=catDetect(rows);return {name:name,rows:rows,nc:d.nc,pc:d.pc,hdr:d.hdr}}
+/* Строки листа в пункты. Строка только с текстом при наличии цен в листе считается заголовком раздела */
+function catItemsOf(sh,si){var out=[],sec=sh.name||'',hasP=sh.pc>=0&&sh.rows.some(function(r,i){return i>sh.hdr&&catPrice(r[sh.pc])>0});
+  sh.rows.forEach(function(r,i){if(i<=sh.hdr)return;var n=String(r[sh.nc]==null?'':r[sh.nc]).replace(/\s+/g,' ').trim().slice(0,CAT_MAX_NAME);if(!n||!/[a-zа-яё]/i.test(n)||/^(итого|всего|сумма|total)/i.test(n))return;
+    var pr=sh.pc>=0?catPrice(r[sh.pc]):0,filled=r.filter(function(c){return c!==''&&c!=null}).length;
+    if(hasP&&!pr&&filled===1){sec=n;return}
+    out.push({k:si+'_'+i,n:n,pr:pr,sec:sec})});return out}
+function catAllItems(){var out=[];catImp.sheets.forEach(function(sh,si){out=out.concat(catItemsOf(sh,si))});return out}
+function catNodes(root,tag){return Array.prototype.slice.call(root.getElementsByTagNameNS('*',tag))}
+function catXml(t){var d=new DOMParser().parseFromString(t,'application/xml');if(d.getElementsByTagName('parsererror').length)throw new Error('xml');return d}
+function catEntry(E,name){var e=E.filter(function(x){return x.name===name})[0];if(!e)return Promise.resolve('');if(e.us>CAT_MAX_XML)return Promise.reject(new Error('big'));return zEntryText(e)}
+function catSheetRows(xml,shared){var rows=[];catNodes(catXml(xml),'row').some(function(row){var r=[];catNodes(row,'c').forEach(function(c,pos){var ref=/^[A-Z]+/.exec(c.getAttribute('r')||''),j=pos;if(ref){j=0;for(var a=0;a<ref[0].length;a++)j=j*26+ref[0].charCodeAt(a)-64;j--}
+      var t=c.getAttribute('t'),vv=catNodes(c,'v')[0],val='';if(t==='s')val=shared[+(vv&&vv.textContent)]||'';else if(t==='inlineStr')val=catNodes(c,'t').map(function(x){return x.textContent}).join('');else if(vv){val=vv.textContent;if(t!=='str'&&t!=='b'&&t!=='e'&&val!==''&&!isNaN(+val))val=+val;else if(t==='b'||t==='e')val=''}
+      while(r.length<j)r.push('');r[j]=val});
+    if(r.some(function(c){return c!==''&&c!=null}))rows.push(r);return rows.length>=CAT_MAX_ROWS});return rows}
+function catParseXlsx(buf){var E=unzipList(buf);return Promise.all([catEntry(E,'xl/workbook.xml'),catEntry(E,'xl/_rels/workbook.xml.rels'),catEntry(E,'xl/sharedStrings.xml')]).then(function(a){if(!a[0])throw new Error('notxlsx');
+    var shared=a[2]?catNodes(catXml(a[2]),'si').map(function(si){return Array.prototype.filter.call(si.childNodes,function(n){return n.localName==='t'||n.localName==='r'}).map(function(n){return n.localName==='t'?n.textContent:catNodes(n,'t').map(function(x){return x.textContent}).join('')}).join('')}):[];
+    var rel={};if(a[1])catNodes(catXml(a[1]),'Relationship').forEach(function(r){rel[r.getAttribute('Id')]=r.getAttribute('Target')});
+    var list=catNodes(catXml(a[0]),'sheet').filter(function(x){return (x.getAttribute('state')||'visible')==='visible'}).map(function(x){var id=x.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id')||x.getAttribute('r:id'),t=String(rel[id]||'').replace(/^\/?(xl\/)?/,'');return {name:x.getAttribute('name')||'',path:'xl/'+t}});
+    return Promise.all(list.map(function(x){return catEntry(E,x.path)})).then(function(X){var many=list.length>1,out=[];X.forEach(function(xml,i){if(!xml)return;var rows=catSheetRows(xml,shared);if(rows.length)out.push(catSheet(many?list[i].name:'',rows))});return out})})}
+/* Вставленный текст: табуляция из Excel, точка с запятой из CSV или «Свечи 150 ₽» из заметок */
+function catParseText(t){var L=String(t).split(/\r?\n/).filter(function(x){return x.trim()}).slice(0,CAT_MAX_ROWS),sep=/\t/.test(t)?'\t':/;/.test(t)?';':'';
+  var rows=L.map(function(x){if(sep)return x.split(sep).map(function(c){return c.trim()});var m=/^(.*?)[\s:—–-]+(\d[\d\s ]*(?:[.,]\d+)?)\s*(?:₽|руб\.?|р\.?)?\s*$/i.exec(x.trim());return m?[m[1].trim(),m[2]]:[x.trim()]});
+  return rows.length?[catSheet('',rows)]:[]}
+function catSetImp(name,sheets){if(!sheets.length){toast('В файле не нашлось строк','Ок',hideToast);return}catImp={file:name,sheets:sheets,off:{}};render();window.scrollTo(0,0)}
+function catFile(inp){var f=inp.files&&inp.files[0];inp.value='';if(!f)return Promise.resolve();
+  if(f.size>CAT_MAX_FILE){toast('Файл больше 20 МБ','Ок',hideToast);return Promise.resolve()}
+  if(/\.(csv|txt)$/i.test(f.name))return f.text().then(function(t){catSetImp(f.name,catParseText(t))}).catch(function(){toast('Не получилось прочитать файл','Ок',hideToast)});
+  if(!/\.(xlsx|xlsm)$/i.test(f.name)){toast('Нужен файл .xlsx. В Excel: «Сохранить как» → .xlsx','Ок',hideToast);return Promise.resolve()}
+  return f.arrayBuffer().then(catParseXlsx).then(function(sh){catSetImp(f.name,sh)}).catch(function(){toast('Не получилось прочитать файл. Скопируй таблицу и вставь её ниже','Ок',hideToast)})}
+function catPaste(){var t=v('cat_txt');if(!t.trim())return;catSetImp('Вставленная таблица',catParseText(t))}
+function catCol(si,k,val){catImp.sheets[si][k]=+val;catImp.off={};render()}
+function catOff(k,on){if(on)delete catImp.off[k];else catImp.off[k]=true;var e=document.getElementById('cat_go');if(e)e.textContent='Добавить в каталог ('+catAllItems().filter(function(x){return !catImp.off[x.k]}).length+')'}
+function catCancel(){catImp=null;render()}
+function catImport(){var I=catAllItems().filter(function(x){return !catImp.off[x.k]});if(!I.length)return;var was=(S.matCat||[]).slice(),C=was.map(function(x){return Object.assign({},x)}),add=0,upd=0;
+  I.forEach(function(x){var key=x.n.toLowerCase(),o=C.filter(function(c){return c.n.toLowerCase()===key})[0];if(o){o.pr=x.pr||o.pr;if(x.sec)o.sec=x.sec;upd++}else{C.push({id:uid(),n:x.n,pr:x.pr,sec:x.sec});add++}});
+  S.matCat=C;catImp=null;save();render();toast('Добавлено '+add+(upd?', обновлено '+upd:''),'Вернуть',function(){S.matCat=was;save();render()})}
+function catLeave(){var b=catBack;catBack=null;catImp=null;if(!b){setTab('decor');return}openP(b.id);backTab=b.back;dTab='role';render()}
+function catOpen(id){catBack=id?{id:id,back:backTab}:null;closeAdd();setTab('matcat')}
+function catAddOne(){var n=v('cat_n').trim().slice(0,CAT_MAX_NAME);if(!n)return;S.matCat=(S.matCat||[]).concat([{id:uid(),n:n,pr:catPrice(v('cat_p')),sec:''}]);save();render()}
+function catDel(id){if(armed!=='cat'+id){armed='cat'+id;render();return}armed=null;S.matCat=(S.matCat||[]).filter(function(x){return x.id!==id});save();render()}
+function catClear(){if(armed!=='catall'){armed='catall';render();return}armed=null;var was=S.matCat;S.matCat=[];save();render();toast('Каталог очищен','Вернуть',function(){S.matCat=was;save();render()})}
+function catEdit(id){catEditId=id;openAdd('catItem')}
+function catEditSave(){var x=(S.matCat||[]).filter(function(c){return c.id===catEditId})[0],n=v('ce_n').trim().slice(0,CAT_MAX_NAME);if(!x){closeAdd();return}if(!n){toast('Напиши название','Ок',hideToast);return}x.n=n;x.pr=catPrice(v('ce_p'));x.sec=v('ce_s').trim();save();closeAdd();render()}
+function catFilter(inp,box){var q=inp.value.trim().toLowerCase();Array.prototype.forEach.call(document.querySelectorAll(box+' [data-n]'),function(r){r.style.display=!q||r.getAttribute('data-n').indexOf(q)>=0?'':'none'})}
+function catGroups(C,row){var h='',sec=null;C.slice().sort(function(a,b){return (a.sec||'').localeCompare(b.sec||'')||a.n.localeCompare(b.n)}).forEach(function(x){if((x.sec||'')!==sec){sec=x.sec||'';if(sec)h+='<div class="ntg">'+esc(sec)+'</div>'}h+=row(x)});return h}
+function catPreview(){var I=catAllItems(),h='<div class="card"><div class="row"><b>Проверь перед загрузкой</b></div><div class="mut" style="margin:4px 0 10px">'+esc(catImp.file)+'. Сними галочку с лишнего. Если колонки определились неверно, выбери их сами.</div>';
+  catImp.sheets.forEach(function(sh,si){var w=sh.rows.reduce(function(m,r){return Math.max(m,r.length)},0),o=[];for(var j=0;j<w;j++){var head=sh.hdr>=0?sh.rows[sh.hdr][j]:(sh.rows[0]||[])[j];o.push([j,colLetter(j)+(head!==''&&head!=null?' · '+String(head).slice(0,24):'')])}
+    var opt=function(cur,none){return (none?'<option value="-1"'+(cur<0?' selected':'')+'>Нет цены</option>':'')+o.map(function(c){return '<option value="'+c[0]+'"'+(c[0]===cur?' selected':'')+'>'+esc(c[1])+'</option>'}).join('')};
+    if(sh.name)h+='<div class="ntg">Лист «'+esc(sh.name)+'»</div>';
+    h+='<div class="g2"><div><label>Название</label><select onchange="catCol('+si+',\'nc\',this.value)">'+opt(sh.nc,false)+'</select></div><div><label>Цена</label><select onchange="catCol('+si+',\'pc\',this.value)">'+opt(sh.pc,true)+'</select></div></div>'});
+  if(!I.length)h+='<div class="bad" style="margin:8px 0">Пунктов не нашлось. Выбери другие колонки.</div>';
+  h+='<div class="catl">'+I.slice(0,CAT_PREVIEW).map(function(x){return '<label class="catr"><input type="checkbox" checked onchange="catOff(\''+x.k+'\',this.checked)"><span>'+esc(x.n)+(x.sec?'<small>'+esc(x.sec)+'</small>':'')+'</span><b>'+(x.pr?money(x.pr):'без цены')+'</b></label>'}).join('')+'</div>';
+  if(I.length>CAT_PREVIEW)h+='<div class="mut" style="margin-top:6px">Показаны первые '+CAT_PREVIEW+' из '+I.length+', загрузятся все отмеченные.</div>';
+  return h+'<div class="row" style="margin-top:12px"><button class="btn s" onclick="catCancel()">Отмена</button><button class="btn" id="cat_go" onclick="catImport()">Добавить в каталог ('+I.length+')</button></div></div>'}
+function catUpload(){return '<div class="card"><div class="row"><b>Загрузить свою смету</b></div><div class="mut" style="margin:4px 0 10px">Файл Excel (.xlsx) со списком: название и цена. Перед сохранением приложение покажет, что нашло.</div><label class="btn s full fpick" style="justify-content:center">Выбрать файл Excel<input type="file" accept=".xlsx,.xlsm,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" onchange="catFile(this)"></label><details class="adv"><summary>Или вставить таблицу</summary><textarea id="cat_txt" rows="4" placeholder="Скопируй строки из таблицы или напиши: Свечи 150"></textarea><button class="btn s full" onclick="catPaste()">Разобрать</button></details></div>'}
+function vMatCat(){var C=S.matCat||[],h='<button class="btn s bkb" onclick="catLeave()">‹ '+(catBack?'Проект':'Декор')+'</button><div class="svh">Каталог материалов</div>';
+  h+=catImp?catPreview():catUpload();
+  h+='<div class="card"><div class="row"><b>В каталоге: '+C.length+'</b>'+(C.length?'<button class="btn s" onclick="catClear()">'+(armed==='catall'?'Точно очистить?':'Очистить')+'</button>':'')+'</div>';
+  if(C.length>8)h+='<input placeholder="Поиск" style="margin:10px 0 0" oninput="catFilter(this,\'#catall\')">';
+  h+='<div id="catall">'+catGroups(C,function(x){return '<div class="pay" data-n="'+esc(x.n.toLowerCase())+'"><div style="min-width:0"><b>'+esc(x.n)+'</b><div class="mut">'+(x.pr?money(x.pr):'без цены')+'</div></div><span style="display:flex;gap:6px;flex:none"><button class="btn s" onclick="catEdit(\''+x.id+'\')" aria-label="Изменить пункт">✎</button><button class="btn s" onclick="catDel(\''+x.id+'\')" aria-label="Удалить пункт">'+(armed==='cat'+x.id?'удалить?':'✕')+'</button></span></div>'})+'</div>';
+  return h+'<div class="addl"><input id="cat_n" placeholder="Новый пункт"><input id="cat_p" type="number" inputmode="decimal" placeholder="₽" style="flex:0 0 84px"><button class="btn" onclick="catAddOne()">+</button></div></div>'}
+/* Выбор из каталога в смету проекта. Цена копируется: правка каталога не меняет готовые сметы */
+function catPickUpd(){var n=document.querySelectorAll('#catpick input[type=checkbox]:checked').length,b=document.getElementById('cat_add');if(b)b.textContent='Добавить ('+n+')'}
+function catQty(inp){var c=inp.parentNode.querySelector('input[type=checkbox]');if(c&&!c.checked){c.checked=true;catPickUpd()}}
+function catAddPicked(){var p=P(openId);if(!p)return;p.mats=p.mats||[];var n=0;Array.prototype.forEach.call(document.querySelectorAll('#catpick .catr'),function(r){var c=r.querySelector('input[type=checkbox]');if(!c.checked)return;var x=(S.matCat||[]).filter(function(i){return i.id===c.value})[0];if(!x)return;var q=Math.max(1,+r.querySelector('.catq').value||1),o=p.mats.filter(function(m){return m.n.toLowerCase()===x.n.toLowerCase()})[0];if(o){o.q=(+o.q||1)+q;o.got=false}else p.mats.push({id:uid(),n:x.n,q:q,pr:+x.pr||0,got:false});n++});
+  if(!n){toast('Отметь хотя бы один пункт','Ок',hideToast);return}save();closeAdd();render();toast('Добавлено в смету: '+n,'Ок',hideToast)}
+function catPickHtml(){var C=S.matCat||[],p=P(openId)||{},has={};(p.mats||[]).forEach(function(m){has[String(m.n).toLowerCase()]=1});
+  if(!C.length)return '<div class="shh">Каталог пока пуст</div><div class="mut" style="margin-bottom:10px">Загрузи свою смету из Excel или добавь пункты вручную.</div><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="catOpen(openId)">Открыть каталог</button></div>';
+  return '<div class="shh">Выбрать из каталога</div>'+(C.length>8?'<input placeholder="Поиск" oninput="catFilter(this,\'#catpick\')">':'')+'<div class="catl" id="catpick">'+catGroups(C,function(x){var key=x.n.toLowerCase();return '<label class="catr" data-n="'+esc(key)+'"><input type="checkbox" value="'+x.id+'" onchange="catPickUpd()"><span>'+esc(x.n)+'<small>'+(x.pr?money(x.pr):'без цены')+(has[key]?' · уже в смете':'')+'</small></span><input class="catq" type="number" inputmode="numeric" min="1" value="1" aria-label="Количество" oninput="catQty(this)"></label>'})+'</div><div class="row" style="margin-top:10px"><button class="btn s" onclick="catOpen(openId)">Каталог</button><button class="btn" id="cat_add" onclick="catAddPicked()">Добавить (0)</button></div>'}
 function vDecor(){var t0=today();var L=S.projects.filter(function(p){return roleOf(p)==='decor'&&!isFinSt(p.status)&&(!p.date||p.date>=t0)}).sort(function(a,b){return (a.date||'9').localeCompare(b.date||'9')});
-  var h='<div class="row" style="margin-bottom:10px"><div class="date" style="margin:0">Декор</div></div>';
+  var h='<div class="row" style="margin-bottom:10px"><div class="date" style="margin:0">Декор</div><button class="btn s" onclick="catOpen(null)">Каталог · '+(S.matCat||[]).length+'</button></div>';
   if(!L.length)return h+emptyNew('decor','Здесь будет декор','Добавь мероприятие, и появятся монтажи по датам и список закупки.');
   var tb=0;L.forEach(function(p){tb+=dmat(p).b});
   if(tb)h+='<div class="card"><div class="row"><span class="mut">Осталось закупить по всем мероприятиям</span><b class="bad" style="white-space:nowrap">'+money(tb)+'</b></div></div>';
