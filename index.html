@@ -1926,7 +1926,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='8 ноября 2026 · переключатель задач в обзоре';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='8 ноября 2026 · срок у монтажей, плитка тайминга';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false,localAt=0;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true;localAt=+S.savedAt||0}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -2010,6 +2010,7 @@ function openAdd(m){addMode=m||'';var sh=document.getElementById('sheet');if(!sh
 function closeAdd(){var sh=document.getElementById('sheet');addMode='';if(!sh)return;sh.className='';setTimeout(function(){if(!sh.classList.contains('show'))sh.innerHTML=''},320)}
 function addHtml(){var I=function(x){return '<span class="ic"><svg viewBox="0 0 24 24">'+x+'</svg></span>'},R=function(on,ic,t){return '<button class="shi" onclick="'+on+'">'+I(ic)+'<span>'+t+'</span></button>'};
   if(addMode==='status'){var sp=P(openId)||{},cur=sp.status||'Заявка';return '<div class="shh">Статус проекта</div>'+statList(sp).map(function(x,i){return R('statSet('+i+')',x===cur?'<path d="m5 12.5 4.5 4.5L19 7.5"/>':'<circle cx="12" cy="12" r="7.5"/>',esc(x))}).join('')}
+  if(addMode==='tm'){var ti=tmItem()||{};return '<div class="shh">Пункт тайминга</div><label>Время</label><input id="ad_tt" type="time" value="'+esc(ti.t||'')+'"><label>Что происходит</label><input id="ad_tn" value="'+esc(ti.n||'')+'"><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="tmSave()">Сохранить</button></div>'}
   if(addMode==='chat'){var cp=P(openId)||{};return '<div class="shh">Чат команды</div><div class="mut" style="margin-bottom:8px">Вставь ссылку на чат: ВК, Telegram, Instagram, Max, WhatsApp или другой. Кнопка в карточке будет открывать его.</div><label>Ссылка</label><input id="ad_c" type="url" inputmode="url" autocapitalize="off" autocorrect="off" placeholder="https://" value="'+esc(cp.chat||'')+'"><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="chatSave()">Сохранить</button></div>'}
   if(addMode==='note')return '<div class="shh">Заметка на дату</div><label>Дата</label><input type="date" id="ad_d" value="'+esc(tab==='cal'?selDay:today())+'"><label>Текст</label><textarea id="ad_t" rows="3" placeholder="Что нужно не забыть"></textarea><div class="row"><button class="btn s" onclick="openAdd()">Назад</button><button class="btn" onclick="addSaveNote()">Сохранить</button></div>';
   if(addMode==='exp'){var cur=openId||'',L=S.projects.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
@@ -2201,7 +2202,7 @@ function statSet(i){var p=P(openId);if(!p)return;var x=statList(p)[i];if(x===und
 function dStat(p){return '<button class="card dstat" onclick="openAdd(\'status\')" aria-haspopup="dialog"><span><span class="dtll">Статус проекта</span><b>'+esc(p.status||'Заявка')+'</b></span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>'}
 function chatSave(){var t=v('ad_c').trim(),u=chatUrl(t),p=P(openId);if(!p)return;if(t&&!u){toast('Вставь ссылку на чат целиком','Ок',hideToast);return}p.chat=u;save();closeAdd();render();toast(u?'Ссылка сохранена':'Ссылка убрана','Ок',hideToast)}
 function dSh(k,t,sm){var o=!!secO[k];return '<button class="sec sx'+(o?'':' cl')+'" data-k="'+k+'" onclick="tgS(\''+k+'\')" aria-expanded="'+o+'"><span>'+t+'</span><small>'+sm+' <svg class="chev'+(o?' up':'')+'" viewBox="0 0 12 12"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></small></button>'}
-function dTabs(p){var r=roleOf(p),L=[['over','Обзор']];if(r!=='video'||(+p.editsTotal||0)>0)L.push(['role',RP(p).tab[1]]);return L.concat([['time','Тайминг'],['money','Деньги'],['tasks','Задачи'],['docs','Документы']])}
+function dTabs(p){var r=roleOf(p),L=[['over','Обзор'],['role',RP(p).tab[1]]];return L.concat([['time','Тайминг'],['money','Деньги'],['tasks','Задачи'],['docs','Документы']])}
 function dCover(p){
   var dd=p.date?p.date.split('-'):null,n=dd?dleft(p.date):null,rel=n===null?'':n===0?'сегодня':n===1?'завтра':n>0?'через '+dnW(n):dnW(-n)+' назад';
   var wd=dd?WDS[new Date(+dd[0],+dd[1]-1,+dd[2]).getDay()]:'',tm=tmSorted(p),meta=[p.type||'Съёмка',placeTxt(p),tm[0]&&tm[0].t].filter(Boolean).map(esc).join(' · ');
@@ -2233,10 +2234,10 @@ function dRoleTile(p){var r=roleOf(p),on="setDT(\'role\')",a,c,lb;
   else if(r==='host'){if(secOff(p,'sends'))return dTile(on,'Отправка','—','выключена');a=sentN(p);c=(p.sends||[]).length;lb='Отправка'}
   else{var dp=+p.deposit||0;return dTile(on,'Депозит',dp?money(dp):'—',dp?(p.depDone?'внесён':'не внесён'):'не указан',dBarI(dp&&p.depDone?100:0))}
   return dTile(on,lb,a+'/'+c,c?(a>=c?'всё готово':'осталось '+(c-a)):'пока пусто',dBarI(dPct(a,c)))}
-function dTiles(p){var pc=dPct(+p.paid||0,+p.amount||0),T=p.tasks||[],td=T.filter(function(t){return t.done}).length,qa=S.quizQ.filter(function(q){return (p.quiz[q]||'').trim()}).length;
+function dTiles(p){var pc=dPct(+p.paid||0,+p.amount||0),T=p.tasks||[],td=T.filter(function(t){return t.done}).length,tm=tmSorted(p),tn=tm.length;
   return '<div class="dgrid">'+'<button class="card dtl dtlr" onclick="dGo(\'money\',\'pay\')"><span class="dtll">Оплата</span><b>'+money(p.paid)+'</b><small>из '+money(p.amount)+'</small>'+dRing(pc)+'</button>'
    +'<div class="dtlw">'+(secOff(p,'tasks')?dTile("setDT(\'tasks\')",'Задачи','—','выключены'):dTile("setDT(\'tasks\')",'Задачи',td+'/'+T.length,T.length?(td>=T.length?'всё сделано':'осталось '+(T.length-td)):'пока нет',dBarI(dPct(td,T.length))))+secSwt(p,'tasks')+'</div>'
-   +dTile("dGo(\'over\',\'quiz\')",'Анкета',qa+'/'+S.quizQ.length,qa?(qa>=S.quizQ.length?'заполнена':'есть ответы'):'не заполнена',dBarI(dPct(qa,S.quizQ.length)))
+   +dTile("dGo(\'time\',\'timing\')",'Тайминг',tn?tn+' '+plur(tn,['пункт','пункта','пунктов']):'—',tn?(tm[0].t?'начало в '+esc(tm[0].t):'время не указано'):'пока пусто')
    +dRoleTile(p)+'</div>'}
 function nextStep(p){if(isFinSt(p.status))return null;
   var amt=+p.amount||0,n=p.date?dleft(p.date):null,T=secOff(p,'tasks')?[]:(p.tasks||[]),qa=S.quizQ.filter(function(q){return (p.quiz[q]||'').trim()}).length,r=roleOf(p),l=left(p);
@@ -2261,16 +2262,18 @@ function dNext(p){var s=nextStep(p);if(!s)return '<div class="card dnx done"><di
   return '<div class="card dnx"><div><span class="dtll">Следующий шаг</span><b>'+esc(s.t)+'</b>'+(s.x?'<small>'+esc(s.x)+'</small>':'')+'</div><button class="btn s" onclick="'+s.go+'">Сделать</button></div>'}
 /* Редактируемые поля карточки: сохраняются сразу, текст без перерисовки, чтобы не сбивать набор */
 function pSetF(id,k,val){var p=P(id);if(!p)return;p[k]=k==='dwarn'?+val:val;save();if(k!=='extra')render()}
-function dFields(p,late){var set=function(k,ev){return ev+'="pSetF(\''+p.id+'\',\''+k+'\',this.value)"'};
-  return '<div class="g2" style="margin-top:12px"><div><label>'+RP(p).dlK+'</label><input type="date" value="'+esc(p.deadline)+'" '+set('deadline','onchange')+'></div><div><label>Напоминание</label>'+warnSel(p.dwarn).replace('id="f_w"',set('dwarn','onchange'))+'</div></div>'
-   +(p.deadline&&!isFinSt(p.status)?'<div class="'+(late?'bad':'mut')+'" style="font-size:12.5px">'+(late?'Просрочено на '+(-dleft(p.deadline))+' дн.':'Срок: '+when(dleft(p.deadline)))+'</div>':'')
-   +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea rows="3" '+set('extra','oninput')+'>'+esc(p.extra)+'</textarea>'}
-function dDetails(p){var late=p.deadline&&!isFinSt(p.status)&&dleft(p.deadline)<0,c='';
+function pFieldEv(p,k,ev){return ev+'="pSetF(\''+p.id+'\',\''+k+'\',this.value)"'}
+/* Срок и напоминание живут на вкладке роли: при монтажах, музыке, декоре и т. д. */
+function dDeadline(p){var live=p.deadline&&!isFinSt(p.status),late=live&&dleft(p.deadline)<0;
+  return '<div class="card"><div class="g2"><div><label>'+RP(p).dlK+'</label><input type="date" value="'+esc(p.deadline)+'" '+pFieldEv(p,'deadline','onchange')+'></div><div><label>Напоминание</label>'+warnSel(p.dwarn).replace('id="f_w"',pFieldEv(p,'dwarn','onchange'))+'</div></div>'
+   +(live?'<div class="'+(late?'bad':'mut')+'" style="font-size:12.5px">'+(late?'Просрочено на '+(-dleft(p.deadline))+' дн.':'Срок: '+when(dleft(p.deadline)))+'</div>':'')+'</div>'}
+function dExtra(p){return '<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea rows="3" '+pFieldEv(p,'extra','oninput')+'>'+esc(p.extra)+'</textarea>'}
+function dDetails(p){var c='';
   var h='<div class="card"><div class="row"><b>Детали проекта</b></div>'
    +'<div class="mut" style="margin-top:8px"><span class="k">Место</span>'+placeCell(p)+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
    +(p.pack?'<div class="mut"><span class="k">Пакет</span>'+esc(p.pack)+'</div>':'')+(p.phone?'<div class="mut"><span class="k">Телефон</span>'+esc(p.phone)+'</div>':'')+(p.tg?'<div class="mut"><span class="k">Telegram</span>'+esc(p.tg)+'</div>':'')
    +(chatUrl(p.chat)?'<div class="mut"><span class="k">Чат команды</span><span><a target="_blank" rel="noopener" href="'+esc(chatUrl(p.chat))+'">'+esc(chatUrl(p.chat).replace(/^[a-z]+:\/\/(www\.)?/i,'').split('/')[0])+'</a><button class="btn s navb" onclick="openAdd(\'chat\')">Изменить</button></span></div>':'')
-   +dFields(p,late);
+   +dExtra(p);
   if(p.tg)c+='<a class="btn s" target="_blank" rel="noopener" href="https://t.me/'+esc(p.tg.replace(/^https?:\/\/t\.me\//,'').replace(/^@/,''))+'">Telegram</a>';
   if(p.date)c+='<button class="btn s" onclick="icsOne(\''+p.id+'\')">В календарь iPhone</button><a class="btn s" target="_blank" rel="noopener" href="'+gcal(p)+'">В Google Календарь</a>';
   return h+(c?'<div class="contacts">'+c+'</div>':'')+'</div>'}
@@ -2299,7 +2302,7 @@ function dsTiming(p,sh){var h='';
   h+='<div class="card">'+sh('timing','Тайминг дня',tm.length?tm.length+' пункт.'+(tm[0].t?' · с '+tm[0].t:''):'пусто');
   if(secO.timing){
     var nowI=p.date===today()?curTiming(tm):-1;
-    tm.forEach(function(x,i){h+='<div class="tmr'+(i===nowI?' now':'')+'"><b>'+esc(x.t||'—')+'</b><span>'+esc(x.n)+(i===nowI?' <em>сейчас</em>':'')+'</span><button class="btn s" onclick="delTm(\''+p.id+'\',\''+x.id+'\')">✕</button></div>'});
+    tm.forEach(function(x,i){h+='<div class="tmr'+(i===nowI?' now':'')+'" style="cursor:pointer" onclick="if(!event.target.closest(\'button\'))tmOpen(\''+x.id+'\')"><b>'+esc(x.t||'—')+'</b><span>'+esc(x.n)+(i===nowI?' <em>сейчас</em>':'')+'</span><button class="btn s" onclick="tmOpen(\''+x.id+'\')" aria-label="Изменить пункт">✎</button><button class="btn s" aria-label="Удалить пункт" onclick="delTm(\''+p.id+'\',\''+x.id+'\')">✕</button></div>'});
     h+='<div class="addl"><input id="tm_t" type="time" style="flex:0 0 108px"><input id="tm_n" placeholder="Что происходит"><button class="btn" onclick="addTm(\''+p.id+'\')">+</button></div>';
     if(!tm.length)h+='<button class="btn s" style="margin-top:10px" onclick="tplTm(\''+p.id+'\')">Заполнить шаблоном «'+esc(TPLT[p.type]?p.type:'Свадьба')+'»</button>';
     else h+='<div class="row" style="margin-top:10px"><button class="btn s" onclick="shareTm(\''+p.id+'\')">Отправить тайминг</button><button class="btn s" onclick="clrTm(\''+p.id+'\')">'+(armed==='tm'+p.id?'Точно очистить?':'Очистить')+'</button></div>';
@@ -2392,7 +2395,7 @@ function vDetail(p){
   if(!p.quiz)p.quiz={};if(!p.timing)p.timing=[];if(!p.tasks)p.tasks=[];if(!p.gearDone)p.gearDone={};if(!p.payments)p.payments=[];
   if(!dTabs(p).some(function(t){return t[0]===dTab}))dTab='over';
   var h=dCover(p)+dActs(p)+dBar(p),sh=dSh;
-  if(dTab==='role')h+=dsRole(p,sh);
+  if(dTab==='role')h+=dDeadline(p)+dsRole(p,sh);
   else if(dTab==='time')h+=dsTiming(p,sh);
   else if(dTab==='money')h+=dsNet(p,sh)+dsPay(p,sh)+dsExp(p,sh);
   else if(dTab==='tasks')h+=dsTasks(p,sh)+dsGear(p,sh);
@@ -2404,6 +2407,10 @@ var secO={vend:true,band:true,dec:true,mus:true,hall:true,snd:true,timing:true,n
 function tmin(t){var a=String(t||'').split(':');return (+a[0]||0)*60+(+a[1]||0)}
 function curTiming(tm){var n=new Date(),m=n.getHours()*60+n.getMinutes(),idx=-1;tm.forEach(function(x,i){if(x.t&&tmin(x.t)<=m)idx=i});return idx}
 function addTm(id){var t=v('tm_t'),n=v('tm_n').trim();if(!n)return;P(id).timing.push({id:uid(),t:t,n:n});save();render()}
+var tmEditId='';
+function tmOpen(tid){tmEditId=tid;openAdd('tm')}
+function tmItem(){var p=P(openId);return p&&(p.timing||[]).filter(function(x){return x.id===tmEditId})[0]}
+function tmSave(){var x=tmItem(),n=v('ad_tn').trim();if(!x){closeAdd();return}if(!n){toast('Напиши, что происходит','Ок',hideToast);return}x.t=v('ad_tt');x.n=n;save();closeAdd();render()}
 function delTm(id,tid){var p=P(id);p.timing=p.timing.filter(function(x){return x.id!==tid});save();render()}
 function tplTm(id){var p=P(id);p.timing=(TPLT[p.type]||TPLT['Свадьба']).map(function(x){return {id:uid(),t:x[0],n:x[1]}});save();render()}
 function clrTm(id){if(armed!=='tm'+id){armed='tm'+id;render();return}armed=null;P(id).timing=[];save();render()}
@@ -2940,6 +2947,7 @@ function vEdits(){
   return L.map(editCard).join('');
 }
 function editCard(p){
+    if(!(+p.editsTotal>0))return '<div class="card"><div class="mut" style="margin-bottom:10px">Число монтажей не указано.</div><button class="btn s" onclick="editP(\''+p.id+'\')">Указать в проекте</button></div>';
     var l=left(p),pc=Math.round((+p.editsDone||0)/p.editsTotal*100);
     return '<div class="card"><div class="row"><div><b>'+esc(p.names||'Проект')+'</b><div class="mut">съёмка '+fd(p.date)+(p.deadline?' · <span class="'+(l&&!isFinSt(p.status)&&dleft(p.deadline)<0?'bad':'dl')+'">сдача '+fd(p.deadline)+(l&&!isFinSt(p.status)?' ('+(dleft(p.deadline)<0?'просрочено':when(dleft(p.deadline)))+')':'')+'</span>':'')+'</div></div>'
     +'<div class="stepper"><button onclick="step(\''+p.id+'\',-1)">−</button><b>'+(+p.editsDone||0)+'/'+p.editsTotal+'</b><button onclick="step(\''+p.id+'\',1)">+</button></div></div>'
