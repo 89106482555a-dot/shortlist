@@ -261,6 +261,8 @@ button,a,label,.swc,.day{touch-action:manipulation;-webkit-tap-highlight-color:t
 .banner.bk span{flex:1;min-width:0;cursor:pointer}
 .banner.bk .btn.s{flex:none}
 .autos{margin-top:8px;font-size:12.5px;color:var(--ok)}
+.autos.saveFail{color:var(--bad);font-weight:600}
+.banner.alert.saveFail{border:1px solid var(--bad)}
 .fnote{margin:18px 4px 6px;font-size:11px;line-height:1.45;color:var(--mut);text-align:center}
 
 .ntg{margin:12px 0 2px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
@@ -460,6 +462,11 @@ html.stage .dtabs{top:0}
 .seg.pseg .btn.s em{font-style:normal;font-size:12px;font-weight:700;min-width:22px;height:22px;padding:0 6px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;background:var(--hair,var(--line));color:var(--tx);letter-spacing:0}
 .seg.pseg .btn.s.on{background:var(--pri)!important;color:var(--priTx)!important}
 .seg.pseg .btn.s.on em{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.seg.pseg .btn.s.pall{flex:0 0 auto!important;padding:0 13px!important}
+/* кнопка «+ Проект на дату» внизу календаря */
+.btn.caladd{display:block;width:100%;margin:12px 0 0;background:var(--pri);color:var(--priTx);border-color:var(--pri);scroll-margin-bottom:110px}
+.btn.caladd.pop{animation:caladdIn .24s cubic-bezier(.2,.8,.3,1) both}
+@keyframes caladdIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* подсвеченная кнопка раскрытия «Налог и комиссия» */
 .txc .sx .chev{width:24px;height:24px;padding:6px;border-radius:50%;background:var(--pri);stroke:var(--priTx,#fff);stroke-width:2}
@@ -1892,8 +1899,8 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='8 ноября 2026 · Ртуть без кнопки Данные';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
-var hadLocal=false;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true}}catch(e){}
+var APPV='8 ноября 2026 · кнопка на дате, вкладка Все, остаток';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var hadLocal=false,localAt=0;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true;localAt=+S.savedAt||0}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
 function tplFor(t){return (TPL[t]||TPL['Другое']).map(function(x){return Array.isArray(x)?{t:x[0],done:false,days:x[1]}:{t:x,done:false}})}
@@ -1910,8 +1917,20 @@ function setTheme(t){applyTheme(t);render()}
 function toggleTheme(){setTab('theme');window.scrollTo(0,0)}
 function themePanel(){return '<div class="card"><div class="row"><b>Оформление</b><button class="btn s" onclick="toggleTheme()">Готово</button></div><div class="mut" style="margin-top:4px">Выбор сохраняется на этом устройстве. Данные во всех темах одни и те же.</div><div class="thp">'+THEMES.map(function(x){return '<button class="tho'+(x[0]===theme?' on':'')+'" style="--sw:'+x[3]+'" onclick="setTheme(\''+x[0]+'\')"><i></i><span>'+x[1]+'</span><small>'+x[2]+'</small></button>'}).join('')+'</div></div>'}
 var mirT=null;
-function save(){if(S.gearBy){S.gearBy[CR]=S.gear;S.quizBy[CR]=S.quizQ}var j=JSON.stringify(S);try{localStorage.setItem(KEY,j)}catch(e){}
-  clearTimeout(mirT);mirT=setTimeout(function(){try{fput('__state__',new Blob([j],{type:'application/json'})).catch(function(){})}catch(e){}},400)}
+/* Две записи: основная и запасная. Предупреждаем, только если не удались обе: всплывает не чаще раза в минуту, плашка держится, пока запись не заработает.
+   mirReady: запасную запись не трогаем, пока при запуске не сравнили её с основной. saveLow: основная память заполнена, данные только в запасной. */
+var saveFail=false,saveLow=false,mirReady=false,saveWarnAt=0,SAVE_WARN_GAP=6e4,MIRROR_DELAY=400;
+function saveBannerSync(){var b=document.getElementById('banner'),x=b&&b.querySelector('.saveFail');if(saveFail&&b&&!x)b.insertAdjacentHTML('afterbegin',saveAlert());if(!saveFail&&x)x.remove()}
+function saveFailed(){saveFail=true;saveBannerSync();var n=Date.now();if(n-saveWarnAt<SAVE_WARN_GAP)return;saveWarnAt=n;setTimeout(function(){toast('Изменения не сохранились','Копия',toggleData)},0)}
+function saveOk(){if(!saveFail)return;saveFail=false;saveWarnAt=0;saveBannerSync();setTimeout(function(){toast('Сохранение снова работает','Ок',hideToast)},0)}
+function mirrorWrite(j){return fput('__state__',new Blob([j],{type:'application/json'}))}
+/* Основная запись не удалась: запасную пишем сразу, без задержки, от неё теперь зависят данные */
+function mirrorRescue(j){try{mirrorWrite(j).then(function(){saveLow=true;saveOk()}).catch(saveFailed)}catch(e){saveFailed()}}
+function saveAlert(){return saveFail?'<div class="banner alert bk saveFail"><span onclick="toggleData()">Изменения не сохраняются<small>Нет места или доступа к памяти. Сделай копию, пока приложение открыто</small></span><button class="btn s" onclick="toggleData()">Копия</button></div>':''}
+function save(){if(S.gearBy){S.gearBy[CR]=S.gear;S.quizBy[CR]=S.quizQ}S.savedAt=Math.max(Date.now(),(+S.savedAt||0)+1);var j=JSON.stringify(S),localOk=true;try{localStorage.setItem(KEY,j)}catch(e){localOk=false}
+  clearTimeout(mirT);if(!mirReady)return;
+  if(!localOk){mirrorRescue(j);return}
+  saveLow=false;saveOk();mirT=setTimeout(function(){try{mirrorWrite(j).catch(function(){})}catch(e){}},MIRROR_DELAY)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function money(n){return Number(n||0).toLocaleString('ru-RU')+' '+S.cur}
@@ -1919,7 +1938,7 @@ function fd(d){if(!d)return 'без даты';var p=d.split('-');return p[2]+'.'
 function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
 function v(id){var e=document.getElementById(id);return e?e.value:''}
 function left(p){var r=roleOf(p);if(r==='host')return isFinSt(p.status)?0:(p.sends||[]).filter(function(s){return !s.done}).length;if(r==='band')return (isFinSt(p.status)||!p.date||p.date>today())?0:bln(p).n;if(r==='decor')return (isFinSt(p.status)||(p.date&&p.date<today()))?0:dmat(p).n;if(r==='dj')return (isFinSt(p.status)||(p.date&&p.date<today()))?0:(p.moments||[]).filter(function(x){return !(x.t||'').trim()}).length;if(r==='venue')return (isFinSt(p.status)||(p.date&&p.date<today())||!(+p.deposit>0)||p.depDone)?0:1;if(r==='org')return (isFinSt(p.status)||(p.date&&p.date<today()))?0:(p.vendors||[]).filter(function(x){return !x.ok}).length;return Math.max(0,(+p.editsTotal||0)-(+p.editsDone||0))}
-function setTab(t){tab=t;showMore=false;dTab='over';dMenu=false;try{window.scrollTo(0,0)}catch(e){}showForm=false;editId=null;openId=null;gearEdit=false;render()}
+function setTab(t){if(t==='projects')pView='fut';tab=t;showMore=false;dTab='over';dMenu=false;try{window.scrollTo(0,0)}catch(e){}showForm=false;editId=null;openId=null;gearEdit=false;render()}
 
 function render(){
   try{document.body.setAttribute('data-tab',tab)}catch(e){}
@@ -1952,9 +1971,9 @@ function render(){
   bindSwipe();
 }
 
-/* Переключатель «Все проекты | вкладка роли» */
+/* Переключатель «Проекты | вкладка роли» */
 function ptSw(){var R=[S.role||'video'].concat((S.roles||[]).filter(function(r){return r!==(S.role||'video')})),tl=S.projects.filter(function(p){return roleOf(p)===(S.role||'video')}).reduce(function(a,p){return a+left(p)},0);
-  return '<div class="seg ptsw"><button class="btn s'+(tab==='projects'?' on':'')+'" onclick="setTab(\'projects\')">Все проекты</button>'+R.map(function(r,i){var t=RPROF[r].tab;return '<button class="btn s'+(tab===t[0]?' on':'')+'" onclick="setTab(\''+t[0]+'\')">'+esc(t[1])+(i===0&&tl>0?'<em>'+tl+'</em>':'')+'</button>'}).join('')+'</div>'}
+  return '<div class="seg ptsw"><button class="btn s'+(tab==='projects'?' on':'')+'" onclick="setTab(\'projects\')">Проекты</button>'+R.map(function(r,i){var t=RPROF[r].tab;return '<button class="btn s'+(tab===t[0]?' on':'')+'" onclick="setTab(\''+t[0]+'\')">'+esc(t[1])+(i===0&&tl>0?'<em>'+tl+'</em>':'')+'</button>'}).join('')+'</div>'}
 /* Шторка «+» */
 var addMode='';
 function openAdd(m){addMode=m||'';var sh=document.getElementById('sheet');if(!sh){sh=document.createElement('div');sh.id='sheet';document.body.appendChild(sh)}
@@ -1990,7 +2009,7 @@ function dlAlerts(){return S.projects.filter(function(p){if(!p.deadline||isFinSt
 function bkAlert(){if(!S.projects.length)return '';var last=+S.lastBackup||0,days=Math.floor((Date.now()-last)/864e5),snooze=+S.bkSnooze||0;
   if(last&&days<7)return '';if(Date.now()<snooze)return '';
   return '<div class="banner alert bk"><span onclick="toggleData()">Сделай резервную копию<small>'+(last?'последняя '+days+' дн. назад':'копий ещё не было')+' · данные хранятся только на этом устройстве</small></span><button class="btn s" onclick="S.bkSnooze=Date.now()+3*864e5;save();render()">Позже</button></div>'}
-function alerts(){return bkAlert()+dlAlerts()+payAlerts()+taskAlerts()+S.projects.filter(function(p){if(!p.date)return false;var n=dleft(p.date),w=p.warn==null?3:+p.warn;return w>0&&n>=0&&n<=w}).sort(function(a,b){return a.date.localeCompare(b.date)}).map(function(p){return '<div class="banner alert" onclick="goto(\''+p.date+'\');setTab(\'cal\')">Съёмка '+when(dleft(p.date))+': '+esc(p.names||'Проект')+'<small>'+fd(p.date)+' · '+esc(p.type||'Съёмка')+(p.place?' · '+esc(placeTxt(p)):'')+'</small></div>'}).join('')}
+function alerts(){return saveAlert()+bkAlert()+dlAlerts()+payAlerts()+taskAlerts()+S.projects.filter(function(p){if(!p.date)return false;var n=dleft(p.date),w=p.warn==null?3:+p.warn;return w>0&&n>=0&&n<=w}).sort(function(a,b){return a.date.localeCompare(b.date)}).map(function(p){return '<div class="banner alert" onclick="goto(\''+p.date+'\');setTab(\'cal\')">Съёмка '+when(dleft(p.date))+': '+esc(p.names||'Проект')+'<small>'+fd(p.date)+' · '+esc(p.type||'Съёмка')+(p.place?' · '+esc(placeTxt(p)):'')+'</small></div>'}).join('')}
 function ymd(s){return s.split('-').join('')}
 function nextD(s){var a=s.split('-'),d=new Date(+a[0],+a[1]-1,+a[2]+1);return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
 var BS=String.fromCharCode(92),NL=String.fromCharCode(10);
@@ -2030,12 +2049,16 @@ function calAsk(id,edit){var m=document.getElementById('pwm');if(!m){m=document.
 function icsOne(id){var p=S.projects.find(function(x){return x.id===id});if(p&&p.date)icsSend([p],'EventLab-проект.ics')}
 function icsAll(){var t=today();icsSend(S.projects.filter(function(p){return p.date&&p.date>=t&&!isFinSt(p.status)&&p.status!==DONE}),'EventLab-календарь.ics')}
 function calBtns(p){if(!p.date)return '';return '<div style="margin-top:8px"><a class="btn s" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+gcal(p)+'">Добавить в Google Календарь</a> <button class="btn s" onclick="icsOne(\''+p.id+'\')">В календарь iPhone</button></div>'}
-function pick(d){selDay=d;render()}
+/* Кнопка добавления появляется внизу календаря, только когда дату выбрали нажатием */
+var calPicked='',calAddFx=false;
+function pick(d){selDay=d;calPicked=d;calAddFx=true;render();setTimeout(function(){var b=document.querySelector('.caladd');if(b)b.scrollIntoView({block:'nearest',behavior:'smooth'})},30)}
+function calAddBtn(){if(calPicked!==selDay||selDay.slice(0,7)!==calM)return '';var a=selDay.split('-'),lb=new Date(+a[0],+a[1]-1,+a[2]).toLocaleDateString('ru-RU',{day:'numeric',month:'long'}),fx=calAddFx?' pop':'';calAddFx=false;
+  return '<button class="btn full caladd'+fx+'" onclick="newOn(\''+selDay+'\')">+ Проект на '+lb+'</button>'}
 function goto(d){selDay=d;calM=d.slice(0,7);render()}
 function newOn(d){preDate=d;editId=null;showForm=true;tab='projects';render();window.scrollTo(0,0)}
 function addCN(){var t=v('c_n').trim();if(!t)return;S.notes.push({id:uid(),date:selDay,text:t});save();render()}
 function addD(ds,n){var a=ds.split('-'),d=new Date(+a[0],+a[1]-1,+a[2]+n);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
-function goToday(){selDay=today();calM=selDay.slice(0,7);calView='month';render();setTimeout(function(){var d=document.querySelector('.day.sel');if(d)d.scrollIntoView({block:'center',behavior:'smooth'})},30)}
+function goToday(){selDay=today();calPicked=selDay;calAddFx=true;calM=selDay.slice(0,7);calView='month';render();setTimeout(function(){var d=document.querySelector('.day.sel');if(d)d.scrollIntoView({block:'center',behavior:'smooth'})},30)}
 function calSw(){var off=calView==='month'&&(selDay!==today()||calM!==today().slice(0,7));return '<div class="seg csw"><button class="btn s'+(calView==='month'?' on':'')+'" onclick="calView=\'month\';render()">Месяц</button><button class="btn s'+(calView==='week'?' on':'')+'" onclick="calView=\'week\';render()">Неделя</button><button class="btn s tdb'+(off?' hl':'')+'" onclick="goToday()"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/></svg>Сегодня</button></div>'}
 function legend(){var used={};S.projects.forEach(function(p){used[p.type||'Другое']=1});var ks=TYPES.filter(function(t){return used[t]});if(!ks.length)return '';return '<div class="lg">'+ks.map(function(t){return '<span style="--c:'+tc(t)+'"><i></i>'+esc(t)+'</span>'}).join('')+'<span><i style="background:transparent;box-shadow:inset 0 0 0 1px var(--ac)"></i>'+(CR==='video'?'сдача':'дедлайн')+'</span><span><i style="background:var(--mut)"></i>заметка</span></div>'}
 var WD=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
@@ -2063,7 +2086,7 @@ function vCal(){
   var ds=calM+'-'+('0'+d).slice(-2),pl=S.projects.filter(function(p){return p.date===ds}),pc=pl.length,nc=S.notes.filter(function(n){return n.date===ds}).length,dc=S.projects.filter(function(p){return p.deadline===ds&&!isFinSt(p.status)}).length;
   h+='<button class="day'+(ds===today()?' td':'')+(ds===selDay?' sel':'')+'" onclick="pick(\''+ds+'\')">'+d+'<span class="dots">'+pl.slice(0,3).map(function(p){return '<i class="t" style="--c:'+tc(p.type)+'"></i>'}).join('')+(nc?'<i class="n"></i>':'')+(dc?'<i class="d"></i>':'')+'</span></button>';
  }
- h+='</div>'+legend()+'</div><div class="date">'+fd(selDay)+'</div>';
+ h+='</div>'+legend()+calAddBtn()+'</div><div class="date">'+fd(selDay)+'</div>';
  var P=S.projects.filter(function(p){return p.date===selDay});
  if(!P.length)h+='<div class="card mut">В этот день проектов нет</div>';
  P.forEach(function(p){var r=(+p.amount||0)-(+p.paid||0);
@@ -2074,7 +2097,6 @@ function vCal(){
   +'<div class="mut">'+(roleOf(p)==='band'?(p.sc?'Саундчек '+esc(p.sc)+' · ':'')+'состав '+bln(p).c+' · песен '+songN(p):roleOf(p)==='decor'?(p.mT?'Монтаж с '+esc(p.mT)+' · ':'')+(dmat(p).n?'купить: '+dmat(p).n:'материалы '+dmat(p).c):roleOf(p)==='dj'?'Треки: '+musN(p)[0]+'/'+musN(p)[1]:roleOf(p)==='venue'?((S.halls||[]).filter(function(x){return x.id===p.hall}).map(function(x){return 'Зал: '+esc(x.name)})[0]||'Зал не выбран')+(p.guests?' · гостей: '+p.guests:'')+(hallConf(p).length?' · ⚠ накладка':''):roleOf(p)==='host'?'Отправлено: '+sentN(p)+'/'+(p.sends||[]).length:roleOf(p)==='org'?'Подрядчики: '+vok(p)+'/'+(p.vendors||[]).length+' подтверждены':'Монтажи: '+(+p.editsDone||0)+'/'+(+p.editsTotal||0))+'</div>'
   +(p.extra?'<div class="mut"><span class="k">Детали</span>'+esc(p.extra)+'</div>':'')+calBtns(p)+'</div>';});
  S.projects.filter(function(p){return p.deadline===selDay}).forEach(function(p){h+='<div class="card row" style="cursor:pointer" onclick="openP(\''+p.id+'\')"><div><span class="chip st">Сдача монтажа</span><div style="margin-top:8px"><b>'+esc(p.names||'Проект')+'</b></div><div class="mut">'+esc(p.type||'Съёмка')+' · монтажи '+(+p.editsDone||0)+'/'+(+p.editsTotal||0)+' · '+esc(p.status||'Заявка')+'</div></div><span class="mut">›</span></div>'});
- h+='<button class="btn full" style="margin-bottom:10px" onclick="newOn(\''+selDay+'\')">+ Проект на эту дату</button>';
  h+='<div class="card"><b>Заметки на день</b>';
  S.notes.filter(function(n){return n.date===selDay}).forEach(function(n){h+='<div class="row" style="margin-top:8px;align-items:flex-start"><div style="white-space:pre-wrap;min-width:0;overflow-wrap:anywhere">'+esc(n.text)+'</div><button class="btn s" onclick="delN(\''+n.id+'\')">✕</button></div>'});
  h+='<div style="display:flex;gap:6px;margin-top:8px"><input id="c_n" placeholder="Новая заметка" style="margin:0"><button class="btn" onclick="addCN()">+</button></div></div>';
@@ -2112,8 +2134,8 @@ function vProjects(){
   var q=fq.toLowerCase();
   var isDone=function(p){return isFinSt(p.status)||(p.date&&p.date<today())};
   var nDone=S.projects.filter(isDone).length,nFut=S.projects.length-nDone;
-  if(!showForm&&S.projects.length)h=h.replace('<div class="pf">','<div class="seg pseg"><button class="btn s'+(pView!=='done'?' on':'')+'" onclick="pView=\'fut\';render()">Будущие<em>'+nFut+'</em></button><button class="btn s'+(pView==='done'?' on':'')+'" onclick="pView=\'done\';render()">Завершённые<em>'+nDone+'</em></button></div><div class="pf">');
-  var L=S.projects.filter(function(p){return (fdt||(pView==='done'?isDone(p):!isDone(p)))&&(!fdt||p.date===fdt)&&(!fs||(p.status||'Заявка')===fs)&&(!ft||p.type===ft)&&(!q||[p.names,p.place,p.org,p.extra,p.phone,p.tg].join(' ').toLowerCase().indexOf(q)>=0)}).sort(function(a,b){return pView==='done'&&!fdt?(b.date||'').localeCompare(a.date||''):(a.date||'9').localeCompare(b.date||'9')});
+  if(!showForm&&S.projects.length)h=h.replace('<div class="pf">','<div class="seg pseg"><button class="btn s pall'+(pView==='all'?' on':'')+'" onclick="pView=\'all\';render()">Все</button><button class="btn s'+(pView==='fut'?' on':'')+'" onclick="pView=\'fut\';render()">Будущие<em>'+nFut+'</em></button><button class="btn s'+(pView==='done'?' on':'')+'" onclick="pView=\'done\';render()">Завершённые<em>'+nDone+'</em></button></div><div class="pf">');
+  var L=S.projects.filter(function(p){return (fdt||pView==='all'||(pView==='done'?isDone(p):!isDone(p)))&&(!fdt||p.date===fdt)&&(!fs||(p.status||'Заявка')===fs)&&(!ft||p.type===ft)&&(!q||[p.names,p.place,p.org,p.extra,p.phone,p.tg].join(' ').toLowerCase().indexOf(q)>=0)}).sort(function(a,b){if(pView==='all'&&!fdt&&isDone(a)!==isDone(b))return isDone(a)?1:-1;var late=(pView==='done'||(pView==='all'&&isDone(a)))&&!fdt;return late?(b.date||'').localeCompare(a.date||''):(a.date||'9').localeCompare(b.date||'9')});
   if(!L.length&&!showForm)h+=(fdt?emptyBox('proj','На '+fd(fdt)+' проектов нет','Выбери другую дату или сбрось фильтр.'):!S.projects.length?emptyBox('proj','Здесь будут твои проекты','Заведи первый: дата, клиент и сумма. Дальше приложение подскажет, что делать.'):(q||fs||ft)?emptyBox('search','Ничего не найдено','Попробуй другое слово или убери фильтры.'):pView==='done'?emptyBox('check','Завершённых проектов пока нет','Они появятся здесь, когда работа будет завершена.'):emptyBox('proj','Будущих проектов нет','Нажми «Новый проект», когда появится следующая дата.'));
   else if(!showForm&&!S.swHintSeen)h+='<div class="mut swhint">← смахни проект влево, чтобы удалить</div>';
   var WDs=['вс','пн','вт','ср','чт','пт','сб'],MS3=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],lastM=null;
@@ -2129,7 +2151,7 @@ function vProjects(){
      +'<div class="pmain"><div class="pnm">'+esc(p.names||'Без названия')+'</div>'
      +'<div class="pmeta"><i></i>'+esc(p.type||'Съёмка')+(p.place?' · '+esc(placeTxt(p)):'')+'</div>'
      +'<div class="ptags"><span class="pst">'+esc(p.status||'Заявка')+'</span>'+(et?'<span class="ped'+(ed>=et?' done':'')+'">монтаж '+ed+'/'+et+'</span>':'')+(p.deadline&&ed<et&&!isFinSt(p.status)?'<span class="ped'+(dleft(p.deadline)<0?' late':'')+'">сдача '+fd(p.deadline).slice(0,5)+'</span>':'')+'</div></div>'
-     +'<div class="psum"><b>'+money(p.amount)+'</b><span class="'+(rest>0?'bad':'ok')+'">'+(rest>0?'−'+money(rest):'✓ оплачено')+'</span></div>'
+     +'<div class="psum"><b>'+money(p.amount)+'</b><span class="'+(rest>0?'bad':'ok')+'">'+(rest>0?'остаток '+money(rest):'✓ оплачено')+'</span></div>'
      +'<div class="pbar"><i style="width:'+pc+'%"></i></div></div></div>';
   });
   return h;
@@ -2153,7 +2175,7 @@ function dTabs(p){var r=roleOf(p),L=[['over','Обзор']];if(r!=='video'||(+p.
 function dCover(p){
   var dd=p.date?p.date.split('-'):null,n=dd?dleft(p.date):null,rel=n===null?'':n===0?'сегодня':n===1?'завтра':n>0?'через '+dnW(n):dnW(-n)+' назад';
   var wd=dd?WDS[new Date(+dd[0],+dd[1]-1,+dd[2]).getDay()]:'',tm=tmSorted(p),meta=[p.type||'Съёмка',placeTxt(p),tm[0]&&tm[0].t].filter(Boolean).map(esc).join(' · ');
-  var back=backTab==='cal'?'Календарь':TABN[backTab]||'Все проекты';
+  var back=backTab==='cal'?'Календарь':TABN[backTab]||'Проекты';
   return '<div class="pcv" style="--c:'+tc(p.type)+'"><div class="pcvt"><button class="pcvb" onclick="goBackP()" aria-label="Назад: '+esc(back)+'">‹</button><button class="pcvb" onclick="dMenu=!dMenu;render()" aria-label="Ещё" aria-expanded="'+dMenu+'">⋯</button></div>'
    +(dMenu?'<div class="dmb" onclick="dMenu=false;render()"></div><div class="dmn"><button onclick="dMenu=false;editP(\''+p.id+'\')">Изменить</button><button class="bad" onclick="dDel(\''+p.id+'\')">Удалить</button></div>':'')
    +'<div class="pcvd">'+(dd?'<b class="mh">'+(+dd[2])+'</b><span>'+MNG[+dd[1]-1]+', '+wd+'<small>'+rel+'</small></span>':'<span>Без даты</span>')+'</div>'
@@ -2424,7 +2446,7 @@ document.addEventListener('pointerdown',function(e){if(!e.target.closest||!e.tar
 /* файлы: IndexedDB */
 var _db=null;
 function idb(){return new Promise(function(res,rej){if(_db)return res(_db);try{var r=indexedDB.open('shotlist-files',1);r.onupgradeneeded=function(){r.result.createObjectStore('files')};r.onsuccess=function(){_db=r.result;res(_db)};r.onerror=function(){rej(r.error)}}catch(e){rej(e)}})}
-function fput(id,blob){return idb().then(function(db){return new Promise(function(res,rej){var t=db.transaction('files','readwrite');t.objectStore('files').put(blob,id);t.oncomplete=function(){res()};t.onerror=function(){rej(t.error)}})})}
+function fput(id,blob){return idb().then(function(db){return new Promise(function(res,rej){var t=db.transaction('files','readwrite');t.objectStore('files').put(blob,id);t.oncomplete=function(){res()};t.onerror=t.onabort=function(){rej(t.error)}})})}
 function fget(id){return idb().then(function(db){return new Promise(function(res,rej){var q=db.transaction('files').objectStore('files').get(id);q.onsuccess=function(){res(q.result)};q.onerror=function(){rej(q.error)}})})}
 function fdel(id){return idb().then(function(db){var t=db.transaction('files','readwrite');t.objectStore('files').delete(id)}).catch(function(){})}
 function fsz(n){return n>1048576?(n/1048576).toFixed(1)+' МБ':Math.max(1,Math.round(n/1024))+' КБ'}
@@ -2771,7 +2793,7 @@ function delP(id){if(armed!==id){armed=id;render();return}armed=null;S.projects=
 function setQ(val){fq=val;render();var e=document.getElementById('f_q');e.focus();e.setSelectionRange(val.length,val.length)}
 function toggleData(){dmsg='';setTab('backup');window.scrollTo(0,0)}
 function dataPanel(){return '<div class="card"><div class="row"><b>Перенос и копия</b><button class="btn s" onclick="toggleData()">Готово</button></div>'
- +'<div class="mut" style="margin-top:4px;font-size:11px">Версия приложения: '+APPV+'</div><div class="autos">✓ Все изменения сохраняются автоматически на этом устройстве'+(S.lastBackup?'. Последняя копия в файл: '+new Date(S.lastBackup).toLocaleDateString('ru-RU'):'')+'</div><div class="mut" style="margin:6px 0 12px">Сохрани копию в файл и отправь её на другое устройство (AirDrop, Telegram, почта). Там нажми «Загрузить из файла». В копию входят проекты, оплаты, заметки, ответы и прикреплённые файлы.</div>'
+ +'<div class="mut" style="margin-top:4px;font-size:11px">Версия приложения: '+APPV+'</div><div class="autos'+(saveFail?' saveFail':'')+'">'+(saveFail?'Сейчас изменения не сохраняются. Сделай копию в файл':saveLow?'✓ Основная память заполнена, изменения хранятся в запасной. Лучше сделать копию в файл':'✓ Все изменения сохраняются автоматически на этом устройстве')+(S.lastBackup?'. Последняя копия в файл: '+new Date(S.lastBackup).toLocaleDateString('ru-RU'):'')+'</div><div class="mut" style="margin:6px 0 12px">Сохрани копию в файл и отправь её на другое устройство (AirDrop, Telegram, почта). Там нажми «Загрузить из файла». В копию входят проекты, оплаты, заметки, ответы и прикреплённые файлы.</div>'
  +'<label class="tgl shk"><input type="checkbox" id="enc_bk"><span>Защитить файл паролем<small>без пароля копию не открыть, даже если файл попадёт к чужим</small></span></label>'
  +'<div class="ract" style="margin-top:0"><button class="btn" onclick="exportFile()">Сохранить копию в файл</button><label class="btn s fpick" style="flex:1;justify-content:center">Загрузить из файла<input type="file" accept=".json,application/json" onchange="importFile(this)"></label></div>'
  +'<details class="adv"><summary>Перенос кодом (без файлов)</summary><textarea id="d_o" rows="3" readonly>'+esc(JSON.stringify(S))+'</textarea><button class="btn s full" onclick="copyData()">Скопировать код</button><textarea id="d_i" rows="3" placeholder="Вставьте сюда код с другого устройства" style="margin-top:10px"></textarea><button class="btn s full" onclick="importData()">Загрузить код (заменит текущие данные)</button></details>'
@@ -3375,10 +3397,11 @@ migrate();applyTheme(theme);render();
 /* автосохранение: защищённое хранилище + запасная копия + восстановление */
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persisted().then(function(p){if(!p)navigator.storage.persist()})}catch(e){}
 (function(){try{fget('__state__').then(function(b){if(!b)return b;return b.text()}).then(function(t){
+  mirReady=true;
   if(!t){if(S.projects.length)save();return}
-  var d=JSON.parse(t);
-  if(!hadLocal&&d&&Array.isArray(d.projects)&&d.projects.length){S=Object.assign({projects:[],expenses:[],notes:[],cur:'₽'},d);migrate();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast('Данные восстановлены из запасной копии','Ок',hideToast)}
-  else if(S.projects.length)save()}).catch(function(){})}catch(e){}})();
+  var d=JSON.parse(t),valid=d&&Array.isArray(d.projects),lost=!hadLocal&&valid&&d.projects.length,newer=hadLocal&&valid&&(+d.savedAt||0)>localAt;
+  if(lost||newer){S=Object.assign({projects:[],expenses:[],notes:[],cur:'₽'},d);migrate();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){saveLow=true}render();toast(newer?'Последние изменения восстановлены':'Данные восстановлены из запасной копии','Ок',hideToast)}
+  else if(S.projects.length)save()}).catch(function(){mirReady=true})}catch(e){mirReady=true}})();
 lockScreen();
 
 /* ===== обучающие подсказки ===== */
