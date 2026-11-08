@@ -264,6 +264,11 @@ button,a,label,.swc,.day{touch-action:manipulation;-webkit-tap-highlight-color:t
 .autos.saveFail{color:var(--bad);font-weight:600}
 .chkb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 10px}
 .chksw{margin-left:auto;display:flex}
+.card.dstat{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;color:var(--tx);cursor:pointer}
+.dstat>span{min-width:0}
+.dstat .dtll{display:block}
+.dstat b{display:block;margin-top:2px;font-size:17px;color:var(--tx);overflow-wrap:anywhere}
+.dstat svg{flex:none;width:16px;height:16px;fill:none;stroke:var(--mut);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 /* переключатель раздела: цвета из темы */
 .swt{flex:none;position:relative;width:48px;height:28px;min-width:48px;margin:0;padding:0;box-sizing:border-box;border:1px solid var(--line);border-radius:99px;background:var(--hair,var(--line));cursor:pointer;box-shadow:none;transition:background .16s ease,border-color .16s ease}
 .swt::after{content:'';position:absolute;inset:-9px}
@@ -1908,7 +1913,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='8 ноября 2026 · переключатель разделов';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='8 ноября 2026 · статус в карточке';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false,localAt=0;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true;localAt=+S.savedAt||0}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -1987,10 +1992,11 @@ function ptSw(){var R=[S.role||'video'].concat((S.roles||[]).filter(function(r){
 var addMode='';
 function openAdd(m){addMode=m||'';var sh=document.getElementById('sheet');if(!sh){sh=document.createElement('div');sh.id='sheet';document.body.appendChild(sh)}
   var wasOpen=sh.classList.contains('show');sh.innerHTML='<div class="shb" onclick="closeAdd()"></div><div class="shc"><div class="shg"></div>'+wordFix(addHtml())+'</div>';
-  if(addMode)sh.className='show frm';else if(wasOpen)sh.className='show';else{sh.className='';void sh.offsetWidth;sh.className='show'}
-  if(addMode){var f=sh.querySelector('textarea,input[type=number],input[type=url]');if(f)setTimeout(function(){f.focus()},60)}}
+  if(addMode==='status')sh.className='show';else if(addMode)sh.className='show frm';else if(wasOpen)sh.className='show';else{sh.className='';void sh.offsetWidth;sh.className='show'}
+  if(addMode&&addMode!=='status'){var f=sh.querySelector('textarea,input[type=number],input[type=url]');if(f)setTimeout(function(){f.focus()},60)}}
 function closeAdd(){var sh=document.getElementById('sheet');addMode='';if(!sh)return;sh.className='';setTimeout(function(){if(!sh.classList.contains('show'))sh.innerHTML=''},320)}
 function addHtml(){var I=function(x){return '<span class="ic"><svg viewBox="0 0 24 24">'+x+'</svg></span>'},R=function(on,ic,t){return '<button class="shi" onclick="'+on+'">'+I(ic)+'<span>'+t+'</span></button>'};
+  if(addMode==='status'){var sp=P(openId)||{},cur=sp.status||'Заявка';return '<div class="shh">Статус проекта</div>'+statList(sp).map(function(x,i){return R('statSet('+i+')',x===cur?'<path d="m5 12.5 4.5 4.5L19 7.5"/>':'<circle cx="12" cy="12" r="7.5"/>',esc(x))}).join('')}
   if(addMode==='chat'){var cp=P(openId)||{};return '<div class="shh">Чат команды</div><div class="mut" style="margin-bottom:8px">Вставь ссылку на чат: ВК, Telegram, Instagram, Max, WhatsApp или другой. Кнопка в карточке будет открывать его.</div><label>Ссылка</label><input id="ad_c" type="url" inputmode="url" autocapitalize="off" autocorrect="off" placeholder="https://" value="'+esc(cp.chat||'')+'"><div class="row"><button class="btn s" onclick="closeAdd()">Отмена</button><button class="btn" onclick="chatSave()">Сохранить</button></div>'}
   if(addMode==='note')return '<div class="shh">Заметка на дату</div><label>Дата</label><input type="date" id="ad_d" value="'+esc(tab==='cal'?selDay:today())+'"><label>Текст</label><textarea id="ad_t" rows="3" placeholder="Что нужно не забыть"></textarea><div class="row"><button class="btn s" onclick="openAdd()">Назад</button><button class="btn" onclick="addSaveNote()">Сохранить</button></div>';
   if(addMode==='exp'){var cur=openId||'',L=S.projects.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
@@ -2176,6 +2182,10 @@ function dGo(k,sec){dTab=k;dMenu=false;if(sec&&sec!=='share')secO[sec]=true;rend
 function dDel(id){var b=backTab;dMenu=false;backTab=null;openId=null;tab=b||'projects';swDel(id)}
 function dNo(msg){toast(msg,'Изменить',function(){hideToast();editP(openId)})}
 function chatUrl(raw){var t=String(raw||'').trim(),m=t.match(/(?:https?:\/\/|tg:\/\/)[^\s<>"']+/i);if(m)return m[0];return /^[a-zа-яё0-9-]+(\.[a-zа-яё0-9-]+)+(\/\S*)?$/i.test(t)?'https://'+t:''}
+/* Смена статуса из карточки. Старый статус не из списка роли показываем, чтобы он не терялся из выбора */
+function statList(p){var L=RP(p).stat.slice(),c=p.status;if(c&&L.indexOf(c)<0)L.unshift(c);return L}
+function statSet(i){var p=P(openId);if(!p)return;var x=statList(p)[i];if(x===undefined)return;p.status=x;save();closeAdd();render();toast('Статус: '+x,'Ок',hideToast)}
+function dStat(p){return '<button class="card dstat" onclick="openAdd(\'status\')" aria-haspopup="dialog"><span><span class="dtll">Статус проекта</span><b>'+esc(p.status||'Заявка')+'</b></span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></button>'}
 function chatSave(){var t=v('ad_c').trim(),u=chatUrl(t),p=P(openId);if(!p)return;if(t&&!u){toast('Вставь ссылку на чат целиком','Ок',hideToast);return}p.chat=u;save();closeAdd();render();toast(u?'Ссылка сохранена':'Ссылка убрана','Ок',hideToast)}
 function dSh(k,t,sm){var o=!!secO[k];return '<button class="sec sx'+(o?'':' cl')+'" data-k="'+k+'" onclick="tgS(\''+k+'\')" aria-expanded="'+o+'"><span>'+t+'</span><small>'+sm+' <svg class="chev'+(o?' up':'')+'" viewBox="0 0 12 12"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg></small></button>'}
 function dTabs(p){var r=roleOf(p),L=[['over','Обзор']];if(r!=='video'||(+p.editsTotal||0)>0)L.push(['role',RP(p).tab[1]]);return L.concat([['time','Тайминг'],['money','Деньги'],['tasks','Задачи'],['docs','Документы']])}
@@ -2243,7 +2253,7 @@ function dFields(p,late){var set=function(k,ev){return ev+'="pSetF(\''+p.id+'\',
    +(p.deadline&&!isFinSt(p.status)?'<div class="'+(late?'bad':'mut')+'" style="font-size:12.5px">'+(late?'Просрочено на '+(-dleft(p.deadline))+' дн.':'Срок: '+when(dleft(p.deadline)))+'</div>':'')
    +'<label>Дополнительно (тайминг, пожелания, контакты)</label><textarea rows="3" '+set('extra','oninput')+'>'+esc(p.extra)+'</textarea>'}
 function dDetails(p){var late=p.deadline&&!isFinSt(p.status)&&dleft(p.deadline)<0,c='';
-  var h='<div class="card"><div class="row"><b>Детали проекта</b><span class="chip st">'+esc(p.status||'Заявка')+'</span></div>'
+  var h='<div class="card"><div class="row"><b>Детали проекта</b></div>'
    +'<div class="mut" style="margin-top:8px"><span class="k">Место</span>'+placeCell(p)+'</div><div class="mut"><span class="k">Организаторы</span>'+esc(p.org||'—')+'</div>'
    +(p.pack?'<div class="mut"><span class="k">Пакет</span>'+esc(p.pack)+'</div>':'')+(p.phone?'<div class="mut"><span class="k">Телефон</span>'+esc(p.phone)+'</div>':'')+(p.tg?'<div class="mut"><span class="k">Telegram</span>'+esc(p.tg)+'</div>':'')
    +(chatUrl(p.chat)?'<div class="mut"><span class="k">Чат команды</span><span><a target="_blank" rel="noopener" href="'+esc(chatUrl(p.chat))+'">'+esc(chatUrl(p.chat).replace(/^[a-z]+:\/\/(www\.)?/i,'').split('/')[0])+'</a><button class="btn s navb" onclick="openAdd(\'chat\')">Изменить</button></span></div>':'')
@@ -2374,7 +2384,7 @@ function vDetail(p){
   else if(dTab==='money')h+=dsNet(p,sh)+dsPay(p,sh)+dsExp(p,sh);
   else if(dTab==='tasks')h+=dsTasks(p,sh)+dsGear(p,sh);
   else if(dTab==='docs')h+=ctrSec(p,sh)+sharePanel(p);
-  else h+=dTiles(p)+dNext(p)+dDetails(p)+dsQuiz(p,sh);
+  else h+=dStat(p)+dTiles(p)+dNext(p)+dDetails(p)+dsQuiz(p,sh);
   return h}
 function dTabsFix(){var d=document.querySelector('.dtabs .on');if(d){var w=d.parentNode;w.scrollLeft=d.offsetLeft-(w.clientWidth-d.offsetWidth)/2}}
 var secO={vend:true,band:true,dec:true,mus:true,hall:true,snd:true,timing:true,net:true,pay:true,exp:true,tasks:true,gear:true,ctr:true},quizEdit=false;
