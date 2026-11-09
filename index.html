@@ -541,6 +541,8 @@ html.touring body{overflow:hidden}
 
 .imc{text-align:center}
 .imc .tlogo{margin-bottom:2px}
+.imlogo{display:block;width:56px;height:56px;margin:0 auto 8px;border-radius:14px}
+.imintro{margin:8px 0 2px;font-size:13.5px;line-height:1.45;color:var(--mut)}
 .imp{margin:12px 0 4px;padding:12px;border-radius:14px;background:var(--soft,rgba(255,255,255,.06));border:1px solid var(--hair,var(--line));text-align:left}
 .imp .pnm{font-size:16px}
 #pwm textarea{margin-top:10px}
@@ -1942,7 +1944,7 @@ body.texgo:before{animation:texin .85s cubic-bezier(.2,.8,.2,1)}
 <div id="view"></div>
 </div></div>
 <script>
-var APPV='9 ноября 2026 · правка суммы в оплате';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
+var APPV='9 ноября 2026 · знакомство для новых людей';var KEY='planner_v1', S={projects:[],expenses:[],notes:[],cur:'₽'}, tab='cal', editId=null, showForm=false, preDate='', fq='', fs='', ft='', showData=false, dmsg='', armed=null, pView='fut', fdt='', justSaved=null, calView='month', openId=null, gearEdit=false, statY=new Date().getFullYear(), statM=-1, selDay=today(), calM=selDay.slice(0,7);
 var hadLocal=false,localAt=0;try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw));hadLocal=true;localAt=+S.savedAt||0}}catch(e){}
 var TPL={'Свадьба':['Договор подписан','Предоплата получена','Тайминг от организатора','Обсудить пожелания пары','Съёмка','Тизер','Свадебный фильм','Сдача материалов'],'Love story':['Договор подписан','Предоплата получена','Выбор локации','Референсы и образы','Съёмка','Монтаж ролика','Сдача материалов'],'Клип':['Договор подписан','Предоплата получена','Сценарий и раскадровка','Локации и реквизит','Съёмка','Черновой монтаж','Цветокоррекция','Финальная сдача'],'Репортаж':['Договор подписан','Предоплата получена','Программа мероприятия','Съёмка','Отбор и монтаж','Сдача материалов'],'Реклама':['Бриф от клиента','Договор подписан','Предоплата получена','Сценарий','Съёмка','Монтаж','Правки клиента','Финальная сдача'],'Портрет':['Договор подписан','Предоплата получена','Образ и локация','Съёмка','Отбор кадров','Ретушь','Сдача материалов'],'Другое':['Договор подписан','Предоплата получена','Съёмка','Монтаж','Сдача материалов']};
 var GEAR=['Основная камера','Запасная камера','Объективы','Аккумуляторы заряжены','Карты памяти очищены','Свет','Микрофоны и петлички','Стабилизатор','Штатив','Дрон'];
@@ -2451,9 +2453,10 @@ function docColors(){var cs=getComputedStyle(document.documentElement),V=functio
   return {bg:bg,tx:tx,mut:mut,ac:ac,hero:hero,htx:htx,fam:getComputedStyle(document.body).fontFamily||'sans-serif'}}
 /* Длинную ссылку без пробелов режем по символам, иначе она уйдёт за край картинки */
 function docWrap(c,t,w){var out=[];String(t||'').split('\n').forEach(function(par){var parts=[];par.split(/\s+/).filter(Boolean).forEach(function(x){while(c.measureText(x).width>w&&x.length>1){var n=x.length;while(n>1&&c.measureText(x.slice(0,n)).width>w)n--;parts.push(x.slice(0,n));x=x.slice(n)}parts.push(x)});out=out.concat(parts.length?tmWrap(c,parts.join(' '),w):[''])});return out}
+var DOC_URL='89106482555a-dot.github.io/shortlist';
 function docCanvas(o,logo,measure,paint){var C=docColors(),W=1080,pad=72,mw=W-pad*2,cn=document.createElement('canvas'),c=cn.getContext('2d'),F=function(wg,sz){return wg+' '+sz+'px '+C.fam};
   c.font=F(700,76);var title=docWrap(c,o.title||'Проект',mw);c.font=F(500,42);var meta=[];(o.meta||[]).filter(Boolean).forEach(function(m){meta=meta.concat(docWrap(c,m,mw))});
-  var head=pad+96+56+(o.kind?52:0)+title.length*88+meta.length*56+56,bh=measure(c,C,F,mw),H=head+56+bh+120;if(H>DOC_MAX_H)throw new Error('long');
+  var head=pad+96+56+(o.kind?52:0)+title.length*88+meta.length*56+56,bh=measure(c,C,F,mw),H=head+56+bh+164;if(H>DOC_MAX_H)throw new Error('long');
   cn.width=W;cn.height=H;c.fillStyle=C.bg;c.fillRect(0,0,W,H);c.fillStyle=C.hero;c.fillRect(0,0,W,head);
   var y=pad;if(logo){c.save();c.beginPath();c.roundRect?c.roundRect(pad,y,96,96,22):c.rect(pad,y,96,96);c.clip();c.drawImage(logo,pad,y,96,96);c.restore()}
   c.fillStyle=C.htx;c.textBaseline='middle';c.font=F(700,42);c.fillText('EventLab',pad+(logo?120:0),y+48);c.textBaseline='alphabetic';y+=96+56;
@@ -2461,7 +2464,7 @@ function docCanvas(o,logo,measure,paint){var C=docColors(),W=1080,pad=72,mw=W-pa
   c.font=F(700,76);title.forEach(function(l){y+=72;c.fillText(l,pad,y);y+=16});
   c.font=F(500,42);c.globalAlpha=.85;meta.forEach(function(l){y+=56;c.fillText(l,pad,y-8)});c.globalAlpha=1;
   paint(c,C,F,head+56,pad,mw);
-  c.fillStyle=C.mut;c.font=F(500,32);c.textAlign='center';c.fillText('Составлено в EventLab',W/2,H-48);c.textAlign='left';return cn}
+  c.fillStyle=C.mut;c.font=F(500,32);c.textAlign='center';c.fillText('Составлено в EventLab',W/2,H-92);c.font=F(500,30);c.fillText(DOC_URL,W/2,H-46);c.textAlign='left';return cn}
 /* Документ из разделов: {t:заголовок, mw:ширина метки, rows:[{mk:метка, a:текст, b:подпись, r:справа, strong:итог}]} */
 function docDraw(o,logo){var lay=[],GAP=44,RP=28,AH=54,BH=44,TH=70;
   return docCanvas(o,logo,function(c,C,F,mw){var h=0;(o.secs||[]).forEach(function(sec){var S2={t:sec.t,mw:sec.mw||0,rows:[]};if(sec.t)h+=TH;(sec.rows||[]).forEach(function(r){c.font=F(600,42);var rw=r.r?c.measureText(r.r).width+28:0,w=mw-S2.mw-rw;c.font=F(r.strong?700:500,42);var a=docWrap(c,r.a,w);c.font=F(500,34);var b=r.b?docWrap(c,r.b,w):[];var rh=a.length*AH+b.length*BH+RP;S2.rows.push({mk:r.mk,a:a,b:b,r:r.r,strong:r.strong,h:rh});h+=rh});lay.push(S2);h+=GAP});return h},
@@ -2729,13 +2732,15 @@ function shareProjText(id){var p=P(id),L=[];
   if(shOpt.fin)L.push('','💰 Бюджет: '+money(p.amount)+', оплачено '+money(p.paid));
   docShare(function(l){return docDraw(projDoc(p),l)},L.join('\n'),'проект',p.names||'Проект')}
 function importProjectPack(d){
-  var src=d.p||{},ex=S.projects.find(function(x){return (x.srcId&&x.srcId===src.srcId)||x.id===src.srcId}),wasNew=!ex;
+  var firstRun=!S.roles,src=d.p||{},ex=S.projects.find(function(x){return (x.srcId&&x.srcId===src.srcId)||x.id===src.srcId}),wasNew=!ex;
   if(ex){var keepFin=!d.fin?{amount:ex.amount,payments:ex.payments,client:ex.client,taxOn:ex.taxOn,ak:ex.ak}:{};Object.assign(ex,src,keepFin)}
   else{var n=Object.assign({amount:0,payments:[]},src);n.id=uid();S.projects.push(n);ex=n}
   (d.notes||[]).forEach(function(nn){if(!S.notes.some(function(m){return m.date===nn.date&&m.text===nn.text}))S.notes.push({id:uid(),date:nn.date,text:nn.text})});
-  migrate();syncPaid(ex);save();tab='projects';showForm=false;openId=null;justSaved=ex.id;showData=false;render();
+  migrate();if(firstRun){delete S.roles;delete S.role}syncPaid(ex);save();tab='projects';showForm=false;openId=null;justSaved=ex.id;showData=false;render();
   toast((wasNew?'Проект получен: ':'Проект обновлён: ')+(ex.names||''),'Открыть',function(){hideToast();openP(ex.id)});
-  setTimeout(function(){justSaved=null;render()},2600)}
+  setTimeout(function(){justSaved=null;render()},2600);
+  /* Новый человек пришёл по ссылке: первый запуск пропустил выбор роли, спрашиваем сейчас. Проект получит выбранную роль в rpDone */
+  if(firstRun)rolePick(true)}
 function importProjInput(inp){var f=inp.files&&inp.files[0];if(!f)return;var r=new FileReader();
   r.onload=function(){try{var d=JSON.parse(r.result);withDecrypt(d,function(d){if(d&&d.kind==='project'&&d.p)importProjectPack(d);else toast('Это не файл проекта EventLab','Ок',hideToast)})}catch(e){toast('Не удалось прочитать файл','Ок',hideToast)}inp.value=''};r.readAsText(f)}
 
@@ -3335,7 +3340,7 @@ function drawThemePick(){var m=document.getElementById('rolep');if(!m)return;
 function tpPick(k){applyTheme(k);render();drawThemePick()}
 function tpDone(){var m=document.getElementById('rolep');m.className='';m.innerHTML='';maybeTour()}
 function rpTg(r){var i=rolePickSel.indexOf(r);if(i>=0)rolePickSel.splice(i,1);else rolePickSel.push(r);drawRolePick()}
-function rpDone(){if(!rolePickSel.length)return;var m=document.getElementById('rolep'),first=m._first;S.roles=rolePickSel.slice();if(S.roles.indexOf(S.role)<0||first)S.role=S.roles[0];
+function rpDone(){if(!rolePickSel.length)return;var m=document.getElementById('rolep'),first=m._first;S.roles=rolePickSel.slice();if(S.roles.indexOf(S.role)<0||first)S.role=S.roles[0];if(first&&S.projects.length){S.projects.forEach(function(p){p.role=S.role});migrate()}
   if(first&&!S.projects.length){var R=RPROF[S.role];if(S.role!=='video'&&!S._rdefSet){S.replies=R.rdef.map(function(x){return {id:uid(),title:x[0],text:x[1],files:[]}})}S._rdefSet=1}
   save();m.className='';m.innerHTML='';_brand=null;tab='cal';render();if(first)themePick()}
 function otherLS(){var out=[];[['hostlist_v1','host','HostList'],['eventlist_v1','org','EventList']].forEach(function(a){try{var d=JSON.parse(localStorage.getItem(a[0])||'null');if(d&&Array.isArray(d.projects)&&d.projects.length&&!(S.imported||{})[a[0]])out.push({k:a[0],role:a[1],app:a[2],d:d})}catch(e){}});return out}
@@ -3714,7 +3719,9 @@ function insDraw(){var m=document.getElementById('insm');if(!m||m.className!=='s
 function iosNewBar(){var m=navigator.userAgent.match(/Version\/(\d+)/);return !!m&&+m[1]>=26}
 function impModal(d,raw){var x=d.p||{},m=document.getElementById('pwm');if(!m){m=document.createElement('div');m.id='pwm';document.body.appendChild(m)}
   var iosWeb=isIOS()&&!isStandalone();
-  m.innerHTML='<div class="pwb"></div><div class="pwc card imc"><div class="tlogo">EL</div><b>Тебе прислали проект</b>'
+  var fresh=!S.roles&&!S.projects.length;
+  m.innerHTML='<div class="pwb"></div><div class="pwc card imc"><img class="imlogo" src="icons/apple-touch-icon-v4.png" alt="EventLab" width="56" height="56"><b>Тебе прислали проект</b>'
+   +(fresh?'<div class="imintro">EventLab — планер для тех, кто работает на свадьбах и мероприятиях: календарь, тайминг, деньги и документы. Без регистрации, данные хранятся у тебя на телефоне.</div>':'')
    +'<div class="imp"><div class="pnm">'+esc(x.names||'Проект')+'</div><div class="mut">'+[x.date?fd(x.date):'',x.type||'',x.place||''].filter(Boolean).map(esc).join(' · ')+'</div>'
    +'<div class="mut" style="margin-top:4px">'+[(x.timing||[]).length?'тайминг':'',x.quiz&&Object.keys(x.quiz).length?'анкета':'',(x.tasks||[]).length?'задачи':'',d.fin?'финансы':''].filter(Boolean).join(', ')+'</div></div>'
    +(iosWeb?'<div class="ins"><b>Поставь EventLab на телефон</b><ol><li><span>Скопируй проект</span><button class="btn full" id="imgo">Скопировать проект</button></li><li><span>Внизу Safari нажми <b>'+(iosNewBar()?'•••, затем «Поделиться»':'«Поделиться»')+'</b> и выбери <b>«На экран Домой»</b></span></li><li><span>Открой EventLab с иконки → «Проекты» → «Вставить»</span></li></ol></div><button class="btn s full" style="margin-top:4px" id="imhere">Просто открыть здесь, в Safari</button>'
